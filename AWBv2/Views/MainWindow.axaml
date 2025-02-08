@@ -1,0 +1,83 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:AWBv2.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AWBv2.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+		xmlns:local="using:AWBv2.Controls"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="AWBv2"
+        Background="white"
+        Foreground="Black">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+    
+    <!-- This handles the actions when someone right clicks -->
+    <Window.ContextMenu>
+        <ContextMenu>
+            <MenuItem Header="Word Wrap" />
+            <MenuItem Header="Undo" />
+            <MenuItem Header="Cut" />
+            <MenuItem Header="Copy" />
+            <MenuItem Header="Paste" />
+            <MenuItem Header="Select All" />
+        </ContextMenu>
+    </Window.ContextMenu>
+    
+    <DockPanel LastChildFill="True">
+        <Menu DockPanel.Dock="Top" Background="#FAFAFA" Foreground="black">
+            <MenuItem Header="_File" Foreground="Black">
+                <MenuItem Header="_Profiles" Command="{Binding OpenProfileWindow}" />
+                <MenuItem Header="_Exit" Command="{Binding CloseWindow}"/>
+            </MenuItem>
+            <MenuItem Header="View" Foreground="Black" />
+            <MenuItem Header="List" Foreground="Black" />
+            <MenuItem Header="Options" Foreground="Black" />
+            <MenuItem Header="Tools" Foreground="Black" />
+        </Menu>
+        
+		<!--AWBWebBrowser window that appears at the top of the screen to show diffs et al. -->
+       <local:AWBWebBrowser x:Name="WebBrowser"  DockPanel.Dock="Top" Height="300" Background="White"/>
+		
+        <DockPanel DockPanel.Dock="Bottom" Height="22">
+            <ProgressBar DockPanel.Dock="Left" Minimum="0" Maximum="100" Width="100" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Center">
+                <TextBlock Text="{Binding LblTimer, StringFormat='Timer: {0}'}" Margin="5,0" />
+                <TextBlock Text="{Binding LblPagesPerMin, StringFormat='Pages/min: {0}'}" Margin="5,0" />
+                <TextBlock Text="{Binding LblEditsPerMin, StringFormat='Edits/min: {0}'}" Margin="5,0" />
+                <TextBlock Text="{Binding LblEditCount, StringFormat='Edits: {0}'}" Margin="5,0" />
+                <TextBlock Text="{Binding LblIgnoredArticles, StringFormat='Skipped: {0}'}" Margin="5,0" />
+                <TextBlock Text="{Binding LblNewArticles, StringFormat='New: {0}'}" Margin="5,0" />
+                <TextBlock Text="{Binding LblProject}" Margin="5,0" />
+                <TextBlock Text="{Binding LblUsername, StringFormat='User: {0}'}" Margin="5,0" />
+            </StackPanel>
+        </DockPanel>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="402"/>
+            </Grid.ColumnDefinitions>
+
+            <Panel Grid.Column="0"  Background="#f3f6f4">
+                <Label>Make list</Label>
+                
+            </Panel>
+            <Panel Grid.Column="2" Background="#f3f6f4">
+                <TextBox>Panel 2</TextBox>
+            </Panel>
+            <Panel Grid.Column="4" Background="#f3f6f4">
+                <TextBox Background="#f3f6f4">Panel 4</TextBox>
+            </Panel>
+        </Grid>
+    </DockPanel>
+
+</Window>

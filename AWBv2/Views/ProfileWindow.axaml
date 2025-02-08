@@ -1,0 +1,17 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:AWBv2.ViewModels"
+        mc:Ignorable="d" 
+        d:DesignWidth="400" d:DesignHeight="200"
+        x:Class="AWBv2.Views.ProfileWindow"
+        x:DataType="vm:ProfileWindowViewModel"
+        Title="Login">
+    
+    <StackPanel Margin="20" Spacing="10">
+        <TextBox Watermark="Username" Text="{Binding Username}"/>
+        <TextBox Watermark="Password" PasswordChar="*" Text="{Binding Password}"/>
+        <Button Content="Login" Command="{Binding LoginCommand}"/>
+    </StackPanel>
+</Window>

@@ -37,7 +37,6 @@ namespace AWBv2
                 finally
                 {
                     var mainWin = new MainWindow();
-                    // Use the parameterless constructor for MainWindowViewModel
                     mainWin.DataContext = new MainWindowViewModel();
                     desktop.MainWindow = mainWin;
                     mainWin.Show();

@@ -3,15 +3,28 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:AWBv2.ViewModels"
+        xmlns:models="using:AWBv2.Models"
         mc:Ignorable="d" 
         d:DesignWidth="400" d:DesignHeight="200"
         x:Class="AWBv2.Views.ProfileWindow"
         x:DataType="vm:ProfileWindowViewModel"
         Title="Login">
-    
-    <StackPanel Margin="20" Spacing="10">
-        <TextBox Watermark="Username" Text="{Binding Username}"/>
-        <TextBox Watermark="Password" PasswordChar="*" Text="{Binding Password}"/>
-        <Button Content="Login" Command="{Binding LoginCommand}"/>
-    </StackPanel>
+    <DockPanel>
+        <ListBox ItemsSource="{Binding Profiles}" Margin="5">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="models:Profile">
+                    <StackPanel Orientation="Horizontal" Margin="2">
+                        <TextBlock Text="{Binding ID}" Width="30"/>
+                        <TextBlock Text="{Binding Username}" Margin="10,0" Width="100"/>
+                        <TextBlock Text="{Binding Password}" Margin="10,0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <StackPanel Margin="20" Spacing="10">
+            <TextBox Watermark="Username" Text="{Binding Username}"/>
+            <TextBox Watermark="Password" PasswordChar="*" Text="{Binding Password}"/>
+            <Button Content="Login" Command="{Binding LoginCommand}"/>
+        </StackPanel>
+    </DockPanel>
 </Window>

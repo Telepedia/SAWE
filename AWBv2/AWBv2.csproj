@@ -32,12 +32,12 @@
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
     </ItemGroup>
-
-    <ItemGroup>
-        <Folder Include="Models\" />
-    </ItemGroup>
     
     <ItemGroup>
         <ProjectReference Include="..\Functions\Functions.csproj" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Models\" />
     </ItemGroup>
 </Project>

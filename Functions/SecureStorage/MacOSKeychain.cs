@@ -3,6 +3,13 @@ using System.Text;
 
 namespace Functions.SecureStorage;
 
+/// <summary>
+/// This class implements the ISecureStorage interface and is responsible for storing
+/// username and passwords for the profiles in macOS Keychain. There is no need for us to encrypt
+/// or otherwise hash passwords going into the Keychain -- we can let macOS handle deciding what and who
+/// can access the Keychain and all of the security associated with this. It **should** be as secure as we
+/// can possibly get, but we shall see.
+/// </summary>
 public class MacOSKeychain : ISecureStorage
 {
     [DllImport("/System/Library/Frameworks/Security.framework/Security")]
@@ -82,7 +89,7 @@ public class MacOSKeychain : ISecureStorage
         }
         byte[] passwordBytes = new byte[passwordLength];
         Marshal.Copy(passwordData, passwordBytes, 0, (int)passwordLength);
-        // Free the memory allocated by SecKeychainFindGenericPassword.
+        // Free the memory allocated by SecKeychainFindGenericPassword; this is fucked but what can we do
         SecKeychainItemFreeContent(IntPtr.Zero, passwordData);
         return Encoding.UTF8.GetString(passwordBytes);
     }

@@ -16,6 +16,7 @@ public partial class ProfileWindow : ReactiveWindow<ProfileWindowViewModel>
         InitializeComponent();
         this.WhenActivated(disposables =>
         {
+            ViewModel.LoadProfilesAsync().ConfigureAwait(false);
             ViewModel.CloseWindow.RegisterHandler(interaction =>
             {
                 this.Close();

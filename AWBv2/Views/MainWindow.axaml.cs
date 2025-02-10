@@ -1,18 +1,38 @@
 using System;
-using System.Threading.Tasks;
 using Avalonia.Controls;
-using Avalonia.Interactivity;
 using Avalonia.ReactiveUI;
 using AWBv2.ViewModels;
-using Functions;
+using ReactiveUI;
+using System.Reactive;
+using System.Reactive.Disposables;
 
-namespace AWBv2.Views;
-
-public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
+namespace AWBv2.Views
 {
-    public MainWindow()
+    public partial class MainWindow : ReactiveWindow<MainWindowViewModel>
     {
-        InitializeComponent();
-        WebBrowser.Navigate("https://en.wikipedia.org");
+        public MainWindow()
+        {
+            InitializeComponent();
+
+            this.WhenActivated(disposables =>
+            {
+                ViewModel?.CloseWindowInteraction.RegisterHandler(interaction =>
+                {
+                    Close();
+                    interaction.SetOutput(Unit.Default);
+                }).DisposeWith(disposables);
+                
+                ViewModel?.ShowProfileWindowInteraction.RegisterHandler(async interaction =>
+                {
+                    var profileWindow = new ProfileWindow
+                    {
+                        DataContext = interaction.Input
+                    };
+                    
+                    await profileWindow.ShowDialog(this);
+                    interaction.SetOutput(Unit.Default);
+                }).DisposeWith(disposables);
+            });
+        }
     }
 }

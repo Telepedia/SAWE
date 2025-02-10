@@ -18,9 +18,7 @@ public partial class ProfileWindow : ReactiveWindow<ProfileWindowViewModel>
         {
             ViewModel.CloseWindow.RegisterHandler(interaction =>
             {
-                // Close the window when the interaction is handled.
                 this.Close();
-                // Indicate that the interaction is complete.
                 interaction.SetOutput(Unit.Default);
             }).DisposeWith(disposables);
         });

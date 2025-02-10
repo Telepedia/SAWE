@@ -1,57 +1,52 @@
 using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using AWBv2.ViewModels;
 using AWBv2.Views;
 
-namespace AWBv2;
-
-public partial class App : Application
+namespace AWBv2
 {
-    public override void Initialize()
+    public partial class App : Application
     {
-        AvaloniaXamlLoader.Load(this);
-    }
-
-    public override async void OnFrameworkInitializationCompleted()
-    {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        public override void Initialize()
         {
-            // Line below is needed to remove Avalonia data validation.
-            // Without this line you will get duplicate validations from both Avalonia and CT
-            BindingPlugins.DataValidators.RemoveAt(0);
-            
-            var splash = new Splash();
-
-            desktop.MainWindow = splash;
-            splash.Show();
-
-
-            try
-            {
-                await splash.RunInitializationAsync();
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Initialization error: {ex.Message}");
-            }
-            finally
-            {
-                
-                var mainWin = new MainWindow();
-                
-                mainWin.DataContext = new MainWindowViewModel(mainWin);
-                
-                desktop.MainWindow = mainWin;
-                mainWin.Show();
-
-                splash.Close();
-            }
+            AvaloniaXamlLoader.Load(this);
         }
-
-        base.OnFrameworkInitializationCompleted();
+    
+        public override async void OnFrameworkInitializationCompleted()
+        {
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                // Remove Avalonia data validation duplicate to avoid duplicate validations
+                BindingPlugins.DataValidators.RemoveAt(0);
+                
+                var splash = new Splash();
+                desktop.MainWindow = splash;
+                splash.Show();
+    
+                try
+                {
+                    await splash.RunInitializationAsync();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Initialization error: {ex.Message}");
+                }
+                finally
+                {
+                    var mainWin = new MainWindow();
+                    // Use the parameterless constructor for MainWindowViewModel
+                    mainWin.DataContext = new MainWindowViewModel();
+                    desktop.MainWindow = mainWin;
+                    mainWin.Show();
+    
+                    splash.Close();
+                }
+            }
+    
+            base.OnFrameworkInitializationCompleted();
+        }
     }
 }

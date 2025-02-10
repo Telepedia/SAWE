@@ -34,7 +34,7 @@
         <Menu DockPanel.Dock="Top" Background="#FAFAFA" Foreground="black">
             <MenuItem Header="_File" Foreground="Black">
                 <MenuItem Header="_Profiles" Command="{Binding OpenProfileWindow}" />
-                <MenuItem Header="_Exit" Command="{Binding CloseWindow}"/>
+                <MenuItem Header="_Exit" Command="{Binding RequestClose}"/>
             </MenuItem>
             <MenuItem Header="View" Foreground="Black" />
             <MenuItem Header="List" Foreground="Black" />

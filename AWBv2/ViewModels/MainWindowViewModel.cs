@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Reactive;
+using System.Reactive.Linq;
 using System.Threading.Tasks;
-using Avalonia;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
-using AWBv2.Controls;
-using AWBv2.Views;
 using ReactiveUI;
+using AWBv2.Controls;
 
 namespace AWBv2.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
 {
-    private readonly Window _window;
     private AWBWebBrowser _webBrowser;
     private string _lblUsername = string.Empty;
     private string _lblProject = "Wikipedia";
@@ -22,13 +18,23 @@ public class MainWindowViewModel : ReactiveObject
     private int _lblEditsPerMin = 0;
     private int _lblPagesPerMin = 0;
     private int _lblTimer = 0;
+    private bool _isMinorEdit = false;
 
     public ReactiveCommand<Unit, Unit> OpenProfileWindow { get; }
+    public ReactiveCommand<Unit, Unit> RequestClose { get; }
+    public Interaction<ProfileWindowViewModel, Unit> ShowProfileWindowInteraction { get; }
+    public Interaction<Unit, Unit> CloseWindowInteraction { get; }
 
     public AWBWebBrowser WebBrowser
     {
-        get => _webBrowser;
+        get => _webBrowser ??= new AWBWebBrowser();
         set => this.RaiseAndSetIfChanged(ref _webBrowser, value);
+    }
+
+    public bool IsMinorEdit
+    {
+        get => _isMinorEdit;
+        set => this.RaiseAndSetIfChanged(ref _isMinorEdit, value);
     }
 
     public string LblUsername
@@ -79,28 +85,23 @@ public class MainWindowViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _lblTimer, value);
     }
 
-    public MainWindowViewModel(Window window)
+    public MainWindowViewModel()
     {
-        _window = window ?? throw new ArgumentNullException(nameof(window));
-        
+        ShowProfileWindowInteraction = new Interaction<ProfileWindowViewModel, Unit>();
+        CloseWindowInteraction = new Interaction<Unit, Unit>();
+
         OpenProfileWindow = ReactiveCommand.CreateFromTask(ShowProfileWindow);
+        RequestClose = ReactiveCommand.CreateFromTask(CloseWindow);
+    }
+
+    private async Task CloseWindow()
+    {
+        await CloseWindowInteraction.Handle(Unit.Default);
     }
 
     private async Task ShowProfileWindow()
     {
-        var profileWindow = new ProfileWindow
-        {
-            DataContext = new ProfileWindowViewModel()
-        };
-
-        // Get the main window reference properly
-        var mainWindow = (Application.Current.ApplicationLifetime as IClassicDesktopStyleApplicationLifetime)?.MainWindow;
-        
-        await profileWindow.ShowDialog(mainWindow);
-    }
-
-    public void CloseWindow()
-    {
-        _window.Close();
+        var profileVM = new ProfileWindowViewModel();
+        await ShowProfileWindowInteraction.Handle(profileVM);
     }
 }

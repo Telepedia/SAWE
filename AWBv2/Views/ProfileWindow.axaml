@@ -5,12 +5,13 @@
         xmlns:vm="using:AWBv2.ViewModels"
         xmlns:models="using:AWBv2.Models"
         mc:Ignorable="d" 
+        SizeToContent="WidthAndHeight"
         d:DesignWidth="400" d:DesignHeight="200"
         x:Class="AWBv2.Views.ProfileWindow"
         x:DataType="vm:ProfileWindowViewModel"
         Title="Login">
     <DockPanel>
-        <ListBox ItemsSource="{Binding Profiles}" Margin="5">
+        <ListBox ItemsSource="{Binding Profiles}" Margin="5" SelectedItem="{Binding SelectedProfile}">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Profile">
                     <StackPanel Orientation="Horizontal" Margin="2">
@@ -24,7 +25,13 @@
         <StackPanel Margin="20" Spacing="10">
             <TextBox Watermark="Username" Text="{Binding Username}"/>
             <TextBox Watermark="Password" PasswordChar="*" Text="{Binding Password}"/>
+            <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" />
             <Button Content="Login" Command="{Binding LoginCommand}"/>
+            <StackPanel Orientation="Horizontal" Spacing="10">
+                <Button Content="Delete" Command="{Binding DeleteCommand}"/>
+                <Button Content="Edit" Command="{Binding EditCommand}"/>
+                <CheckBox Content="Save" IsChecked="False"/>
+            </StackPanel>
         </StackPanel>
     </DockPanel>
 </Window>

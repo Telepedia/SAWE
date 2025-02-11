@@ -6,7 +6,7 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <RuntimeIdentifier>osx-x64</RuntimeIdentifier>
+        <RuntimeIdentifier>osx-x64;win-x64</RuntimeIdentifier>
         <Title>AWBv2</Title>
         <Version>1.0.0</Version> <!-- Display version -->
         <AssemblyVersion>1.0.0.0</AssemblyVersion> <!-- Breaking change -->
@@ -20,7 +20,13 @@
         <CefGlueTargetPlatform>osx-x64</CefGlueTargetPlatform>
     </PropertyGroup>
 
-    <ItemGroup>
+	<PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+		<CefGluePackageSuffix>.x64</CefGluePackageSuffix>
+		<CefGlueTargetPlatform>win-x64</CefGlueTargetPlatform>
+	</PropertyGroup>
+
+
+	<ItemGroup>
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
 

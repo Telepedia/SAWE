@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -13,7 +14,10 @@ public partial class Splash : Window
     public Splash()
     {
         InitializeComponent();
-        Version.Text = "Version 0.0.0";
+        var version = Assembly.GetExecutingAssembly()
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+        Version.Text = $"v. {version}";
         SetProgress(0);
     }
     

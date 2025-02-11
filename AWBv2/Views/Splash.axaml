@@ -5,6 +5,10 @@
         mc:Ignorable="d" d:DesignWidth="478" d:DesignHeight="302"
         x:Class="AWBv2.Views.Splash"
         Title="AutoWikiBrowser v2"
+        ExtendClientAreaToDecorationsHint="True"
+        ExtendClientAreaChromeHints="NoChrome"
+        ExtendClientAreaTitleBarHeightHint="-1"
+        SystemDecorations="BorderOnly"
         Background="White"
         ShowInTaskbar="False"
         Topmost="True">

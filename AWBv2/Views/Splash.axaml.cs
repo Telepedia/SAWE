@@ -18,10 +18,9 @@ public partial class Splash : Window
             .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
             .InformationalVersion;
         Version.Text = $"v. {version}";
-        SetProgress(0);
     }
     
-    private void SetProgress(int percent)
+    public void SetProgress(int percent)
     {
         Dispatcher.UIThread.Invoke(() =>
         {

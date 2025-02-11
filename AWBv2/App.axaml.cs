@@ -1,10 +1,13 @@
 using System;
+using System.IO;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using AWBv2.ViewModels;
 using AWBv2.Views;
+using Functions;
 
 namespace AWBv2
 {
@@ -26,9 +29,26 @@ namespace AWBv2
                 desktop.MainWindow = splash;
                 splash.Show();
     
+                Setup setup = new();
+                
+                splash.SetProgress(0);
+                
                 try
                 {
-                    await splash.RunInitializationAsync();
+                    var databaseExists = await setup.CheckDatabaseAsync();
+
+                    if (databaseExists.Success)
+                    {
+                        splash.SetProgress(25);
+                    }
+                    else
+                    {
+                        // need to show message box eventually, but just log for now and increment the progress
+                        Console.WriteLine("Error when checking the database for existence");
+                        splash.SetProgress(25);
+                    }
+                    
+                    splash.SetProgress(100);
                 }
                 catch (Exception ex)
                 {

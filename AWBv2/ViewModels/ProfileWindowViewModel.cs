@@ -15,7 +15,6 @@ namespace AWBv2.ViewModels;
 public class ProfileWindowViewModel : ReactiveObject
 {
     public ObservableCollection<Profile> Profiles { get; } = new ObservableCollection<Profile>();
-    private readonly AWBProfiles _profileService = new AWBProfiles();
     
     [Reactive] public string Username { get; set; }
     [Reactive] public string Password { get; set; }
@@ -69,7 +68,7 @@ public class ProfileWindowViewModel : ReactiveObject
     public async Task LoadProfilesAsync()
     {
         
-        var profilesList = _profileService.GetProfiles();
+        var profilesList = AWBProfiles.GetProfiles();
         Profiles.Clear();
         foreach (var profile in profilesList)
         {
@@ -85,7 +84,7 @@ public class ProfileWindowViewModel : ReactiveObject
     {
         if (SelectedProfile != null)
         {
-            bool result = await _profileService.DeleteProfile(SelectedProfile);
+            bool result = await AWBProfiles.DeleteProfile(SelectedProfile);
             if (result)
             {
                 // Also remove from the ObservableCollection so the UI updates if we were successful; if not, then
@@ -99,6 +98,9 @@ public class ProfileWindowViewModel : ReactiveObject
                 ErrorMessage = "Error deleting profile. Please try again later.";
             }
         }
+
+        // reload the profiles after deleting one
+        await LoadProfilesAsync();
     }
     
     /// <summary>

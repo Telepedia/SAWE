@@ -17,10 +17,10 @@ public class Setup
             // Only create the DB if it doesn't exist
             if (!File.Exists(dbPath))
             {
-                using var connection = new SqliteConnection($"Data Source={dbPath}");
+                await using var connection = new SqliteConnection($"Data Source={dbPath}");
                 await connection.OpenAsync();
             
-                using var command = connection.CreateCommand();
+                await using var command = connection.CreateCommand();
                 command.CommandText = @"
                 CREATE TABLE IF NOT EXISTS Profiles (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,

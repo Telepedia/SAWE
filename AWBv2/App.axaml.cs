@@ -32,7 +32,7 @@ namespace AWBv2
                 Setup setup = new();
                 
                 splash.SetProgress(0);
-                
+
                 try
                 {
                     var databaseExists = await setup.CheckDatabaseAsync();
@@ -47,7 +47,20 @@ namespace AWBv2
                         Console.WriteLine("Error when checking the database for existence");
                         splash.SetProgress(25);
                     }
-                    
+
+                    var loadProfiles = await setup.LoadProfilesAsync();
+
+                    if (loadProfiles)
+                    {
+                        splash.SetProgress(50);
+                    }
+                    else
+                    {
+                        // need to show message box eventually, but just log for now and increment the progress
+                        Console.WriteLine("Error when loading profiles");
+                        splash.SetProgress(50);
+                    }
+
                     splash.SetProgress(100);
                 }
                 catch (Exception ex)
@@ -60,7 +73,7 @@ namespace AWBv2
                     mainWin.DataContext = new MainWindowViewModel();
                     desktop.MainWindow = mainWin;
                     mainWin.Show();
-    
+
                     splash.Close();
                 }
             }

@@ -1,3 +1,4 @@
+using Functions.Profiles;
 using Microsoft.Data.Sqlite;
 
 namespace Functions;
@@ -37,5 +38,11 @@ public class Setup
         {
             return (false, ex);
         }
+    }
+
+    public async Task<bool> LoadProfilesAsync()
+    {
+        await AWBProfiles.LoadProfilesAsync();
+        return true;
     }
 }

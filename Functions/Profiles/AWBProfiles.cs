@@ -1,6 +1,4 @@
 using AWBv2.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Functions.Profiles
 {

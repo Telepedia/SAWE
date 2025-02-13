@@ -20,6 +20,8 @@ public class ProfileWindowViewModel : ReactiveObject
     [Reactive] public string Password { get; set; }
     [Reactive] public Profile SelectedProfile { get; set; }
     
+    [Reactive] public bool SavePassword { get; set; }
+    
     // placeholder for any error message that might occur during this process, since Avalonia
     // doesn't natively support messagebox or anything like that.
     [Reactive] public string ErrorMessage { get; set; } = string.Empty;
@@ -54,10 +56,45 @@ public class ProfileWindowViewModel : ReactiveObject
     /// Perform the login; doesn't do much at the moment except close the window.
     /// </summary>
     private async Task PerformLogin()
-    { 
-        if (Wiki.Url.Length < 1) return; // do something? idk its 1am 
+    {
+        if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+        {
+            ErrorMessage = "Username and password cannot be empty.";
+            return;
+        }
+
+        var newProfile = new Profile
+        {
+            Username = Username,
+            Password = Password 
+        };
+
+        // igh this is fucked, but basically if we're not saving, lets fool into thinking
+        // the save result was true anyway, it will be overwritten by the result of AWBPrOfiles.Save() 
+        // if the user has opted for that heh
+        bool saveResult = true; 
+
+        if (SavePassword)
+        {
+            saveResult = await AWBProfiles.Save(newProfile);
+        }
+
+        if (!saveResult)
+        {
+            ErrorMessage = "Failed to save profile. Please try again.";
+            return;
+        }
+        
+        Profiles.Add(newProfile);
+        SelectedProfile = newProfile;
+
+        // dehbug
+        Console.WriteLine($"Logged in as: {SelectedProfile.Username}");
+        
         await CloseWindow.Handle(Unit.Default);
     }
+
+
     
     /// <summary>
     /// Load all of the profiles. For now, just returns the list at the top of Profiles.cs

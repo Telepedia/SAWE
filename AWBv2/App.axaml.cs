@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
@@ -32,7 +30,6 @@ namespace AWBv2
                 Setup setup = new();
                 
                 splash.SetProgress(0);
-
                 try
                 {
                     var databaseExists = await setup.CheckDatabaseAsync();

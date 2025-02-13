@@ -31,8 +31,8 @@ public sealed class Setup
                 CREATE TABLE IF NOT EXISTS Profiles (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Username TEXT NOT NULL,
-                    Password TEXT NOT NULL,
-                    OAuth INTEGER NOT NULL
+                    Password BLOB, 
+                    IV BLOB
                 );";
             
                 await command.ExecuteNonQueryAsync();

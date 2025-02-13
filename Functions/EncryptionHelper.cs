@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using Functions.SecureStorage;
 
 namespace Functions;
 
@@ -51,6 +52,15 @@ public static class EncryptionHelper
                 cs.FlushFinalBlock();
                 return (Convert.ToBase64String(ms.ToArray()), aes.IV);
             }
+        }
+    }
+
+    public static void SaveEncryptionKey(byte[] key)
+    {
+        if (Globals.IsMac)
+        {
+            var keychain = new MacOSKeychain();
+            keychain.AddPassword("AWBv2", "AWBv2EncryptionKey", key);
         }
     }
 }

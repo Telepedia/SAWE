@@ -1,4 +1,5 @@
 using Functions.Profiles;
+using Functions.SecureStorage;
 using Microsoft.Data.Sqlite;
 
 namespace Functions;
@@ -35,6 +36,9 @@ public sealed class Setup
                 );";
             
                 await command.ExecuteNonQueryAsync();
+
+                byte[] encryptionKey = EncryptionHelper.GenerateEncryptionKey();
+                EncryptionHelper.SaveEncryptionKey( encryptionKey );
             }
 
             return (true, null);

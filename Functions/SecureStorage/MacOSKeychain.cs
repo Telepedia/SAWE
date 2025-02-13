@@ -45,9 +45,8 @@ public class MacOSKeychain : ISecureStorage
     /// <summary>
     /// Adds a password to the macOS Keychain.
     /// </summary>
-    public void AddPassword(string service, string account, string password)
+    public void AddPassword(string service, string account, byte[] passwordBytes)
     {
-        byte[] passwordBytes = Encoding.UTF8.GetBytes(password);
         IntPtr itemRef;
         int result = SecKeychainAddGenericPassword(
             IntPtr.Zero,

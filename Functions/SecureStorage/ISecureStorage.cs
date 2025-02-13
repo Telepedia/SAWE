@@ -8,7 +8,7 @@ public interface ISecureStorage
     /// <param name="service"></param>
     /// <param name="account"></param>
     /// <param name="password"></param>
-    void AddPassword(string service, string account, string password);
+    void AddPassword(string service, string account, byte[] password);
     
     /// <summary>
     /// Find the password for a specific account from the storage solution

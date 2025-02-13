@@ -67,7 +67,7 @@ public class MacOSKeychain : ISecureStorage
     /// <summary>
     /// Retrieves a password from the macOS Keychain.
     /// </summary>
-    public string FindPassword(string service, string account)
+    public byte[] FindPassword(string service, string account)
     {
         uint passwordLength;
         IntPtr passwordData;
@@ -82,16 +82,21 @@ public class MacOSKeychain : ISecureStorage
             out passwordData,
             out itemRef
         );
+
         if (result != 0)
         {
             throw new Exception("Error finding password in Keychain: " + result);
         }
+
         byte[] passwordBytes = new byte[passwordLength];
         Marshal.Copy(passwordData, passwordBytes, 0, (int)passwordLength);
+
         // Free the memory allocated by SecKeychainFindGenericPassword; this is fucked but what can we do
         SecKeychainItemFreeContent(IntPtr.Zero, passwordData);
-        return Encoding.UTF8.GetString(passwordBytes);
+
+        return passwordBytes;
     }
+
     
     /// <summary>
     /// Deletes a password from the macOS Keychain.

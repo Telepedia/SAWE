@@ -16,7 +16,7 @@ public interface ISecureStorage
     /// <param name="service"></param>
     /// <param name="account"></param>
     /// <returns></returns>
-    string FindPassword(string service, string account);
+    byte[] FindPassword(string service, string account);
     
     /// <summary>
     /// Delete the password/account from the secure storage

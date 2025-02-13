@@ -35,7 +35,7 @@ public static class EncryptionHelper
     /// <param name="plainText"></param>
     /// <param name="key"></param>
     /// <returns></returns>
-    public static (string CipherText, byte[] IV) Encrypt(string plainText, byte[] key)
+    public static (byte[] CipherText, byte[] IV) Encrypt(string plainText, byte[] key)
     {
         using (Aes aes = Aes.Create())
         {
@@ -50,7 +50,7 @@ public static class EncryptionHelper
                 byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
                 cs.Write(plainBytes, 0, plainBytes.Length);
                 cs.FlushFinalBlock();
-                return (Convert.ToBase64String(ms.ToArray()), aes.IV);
+                return (ms.ToArray(), aes.IV); 
             }
         }
     }
@@ -63,4 +63,34 @@ public static class EncryptionHelper
             keychain.AddPassword("AWBv2", "AWBv2EncryptionKey", key);
         }
     }
+
+    public static byte[]? GetEncryptionKey()
+    {
+        if (Globals.IsMac)
+        {
+            var keychain = new MacOSKeychain();
+            return keychain.FindPassword("AWBv2", "AWBv2EncryptionKey");
+        }
+
+        return null;
+    }
+    
+    public static string Decrypt(byte[] cipherText, byte[] iv, byte[] key)
+    {
+        using (Aes aes = Aes.Create())
+        {
+            aes.Key = key;
+            aes.IV = iv;
+            aes.Mode = CipherMode.CBC;
+
+            ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
+            using (MemoryStream ms = new MemoryStream(cipherText))
+            using (CryptoStream cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
+            using (StreamReader sr = new StreamReader(cs))
+            {
+                return sr.ReadToEnd();
+            }
+        }
+    }
+
 }

@@ -54,10 +54,9 @@ public class ProfileWindowViewModel : ReactiveObject
     /// Perform the login; doesn't do much at the moment except close the window.
     /// </summary>
     private async Task PerformLogin()
-    {
-      Variables.HttpAuthUsername = Username;
-      Variables.HttpAuthPassword = Password;
-      await CloseWindow.Handle(Unit.Default);
+    { 
+        if (Wiki.Url.Length < 1) return; // do something? idk its 1am 
+        await CloseWindow.Handle(Unit.Default);
     }
     
     /// <summary>

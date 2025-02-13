@@ -26,7 +26,10 @@ public static class EncryptionHelper
     /// since the IV isn't secret, there's no issue here. We return both the password and the IV back to the caller.
     /// Note, this encrypts the password rather than hashes it; which is similar to what AWB does originally. The encryption key
     /// should be stored in ISecureStorage. We cannot directly encrypt the password as encryption is a one-way operation,
-    /// we wouldn't be able to get the password back UNLESS the user provides it to check if it matches. 
+    /// we wouldn't be able to get the password back UNLESS the user provides it to check if it matches.
+    ///
+    /// Pywikibot stores the password in a plain text file so this is inherintly more secure than pywikibot even if hashing
+    /// would be the preferred way to do things.
     /// </summary>
     /// <param name="plainText"></param>
     /// <param name="key"></param>

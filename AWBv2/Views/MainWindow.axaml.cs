@@ -29,6 +29,15 @@ namespace AWBv2.Views
                         DataContext = interaction.Input
                     };
                     
+                    if (interaction.Input is ProfileWindowViewModel profileViewModel)
+                    {
+                        profileViewModel.LoginSuccess.RegisterHandler(async loginInteraction =>
+                        {
+                            await ViewModel!.HandleProfileLogin(loginInteraction.Input);
+                            loginInteraction.SetOutput(Unit.Default);
+                        }).DisposeWith(disposables);
+                    }
+                    
                     await profileWindow.ShowDialog(this);
                     interaction.SetOutput(Unit.Default);
                 }).DisposeWith(disposables);

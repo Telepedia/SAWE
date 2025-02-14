@@ -30,6 +30,9 @@ public class ProfileWindowViewModel : ReactiveObject
     [Reactive] public string ErrorMessage { get; set; } = string.Empty;
     public ReactiveCommand<Unit, Unit> LoginCommand { get; }
     public Interaction<Unit, Unit> CloseWindow { get; }
+
+    public Interaction<Profile, Unit> LoginSuccess { get; } = new();
+    
     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
     public ReactiveCommand<Unit, Unit> EditCommand { get; }
     public ProfileWindowViewModel()
@@ -96,6 +99,10 @@ public class ProfileWindowViewModel : ReactiveObject
 
         // dehbug
         Console.WriteLine($"Logged in as: {JsonSerializer.Serialize(SelectedProfile, new JsonSerializerOptions { WriteIndented = true })}");
+
+        // notify the main window that the login was successful, and 
+        // we can call the API on the wiki to try and figure shit out 
+        await LoginSuccess.Handle(SelectedProfile);
         
         await CloseWindow.Handle(Unit.Default);
     }

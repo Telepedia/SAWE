@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using ReactiveUI;
 using AWBv2.Controls;
+using AWBv2.Models;
+using Functions;
 
 namespace AWBv2.ViewModels;
 
@@ -20,6 +23,8 @@ public class MainWindowViewModel : ReactiveObject
     private int _lblTimer = 0;
     private bool _isMinorEdit = false;
 
+    public Wiki Wiki { get; set; }
+    
     public ReactiveCommand<Unit, Unit> OpenProfileWindow { get; }
     public ReactiveCommand<Unit, Unit> RequestClose { get; }
     public Interaction<ProfileWindowViewModel, Unit> ShowProfileWindowInteraction { get; }
@@ -103,5 +108,17 @@ public class MainWindowViewModel : ReactiveObject
     {
         var profileVM = new ProfileWindowViewModel();
         await ShowProfileWindowInteraction.Handle(profileVM);
+    }
+    
+    public async Task HandleProfileLogin(Profile profile)
+    {
+        // this should eventually come AFTER we receive a successful login from the MediaWiki API
+        LblUsername = profile.Username;
+        
+        Wiki = await Wiki.CreateAsync(profile.Wiki);
+        
+        // debug for now hehe
+        Console.WriteLine($"Logged in as: {JsonSerializer.Serialize(Wiki, new JsonSerializerOptions { WriteIndented = true })}");
+        
     }
 }

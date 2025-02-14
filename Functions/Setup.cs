@@ -32,6 +32,7 @@ public sealed class Setup
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Username TEXT NOT NULL,
                     Password BLOB, 
+                    Wiki TEXT NOT NULL,
                     IV BLOB
                 );";
             

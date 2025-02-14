@@ -7,4 +7,6 @@ public class Profile
     public string Password { get; set; }
     public byte[] EncryptedPassword { get; set; }
     public byte[] IV { get; set; } 
+    
+    public string Wiki { get; set; }
 }

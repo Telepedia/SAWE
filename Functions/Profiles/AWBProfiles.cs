@@ -44,7 +44,7 @@ namespace Functions.Profiles
             await connection.OpenAsync();
 
             await using var command = connection.CreateCommand();
-            command.CommandText = "SELECT Id, Username, Password, IV FROM Profiles";
+            command.CommandText = "SELECT Id, Username, Password, IV, Wiki FROM Profiles";
 
             await using var reader = await command.ExecuteReaderAsync();
             while (await reader.ReadAsync())
@@ -61,6 +61,7 @@ namespace Functions.Profiles
                     Username = reader.GetString(1),
                     Password = decryptedPassword,
                     EncryptedPassword = encryptedPassword,
+                    Wiki = reader.GetString(4),
                     IV = iv
                 });
             }
@@ -120,7 +121,7 @@ namespace Functions.Profiles
             {
                 command.CommandText = @"
                     UPDATE Profiles 
-                    SET Username = @username, Password = @password, IV = @iv
+                    SET Username = @username, Password = @password, IV = @iv, Wiki = @wiki
                     WHERE Id = @id";
 
                 command.Parameters.AddWithValue("@id", profile.ID);
@@ -128,14 +129,15 @@ namespace Functions.Profiles
             else
             {
                 command.CommandText = @"
-                    INSERT INTO Profiles (Username, Password, IV) 
-                    VALUES (@username, @password, @iv);
+                    INSERT INTO Profiles (Username, Password, IV, Wiki) 
+                    VALUES (@username, @password, @iv, @wiki);
                     SELECT last_insert_rowid();";
             }
 
             command.Parameters.AddWithValue("@username", profile.Username);
             command.Parameters.AddWithValue("@password", profile.EncryptedPassword);
             command.Parameters.AddWithValue("@iv", profile.IV);
+            command.Parameters.AddWithValue("@wiki", profile.Wiki);
 
             if (exists)
             {

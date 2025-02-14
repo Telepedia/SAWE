@@ -45,9 +45,15 @@ public class Wiki
     /// Whether the wiki uses Unicode (uca-) sorting for category sort keys, i.e. the wgCategoryCollation value is a uca-type
     /// </summary>
     public bool UnicodeCategoryCollation = false;
-
+    
     public string WPAWB { get; private set; } = "[https://github.com/OAuthority/AWBv2 AWBv2]";
 
+    /// <summary>
+    /// The UserAgent we should use for requests; inspiration taken from WMF user agent policy
+    /// see: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
+    /// </summary>
+    public string UserAgent { get; } = "AWBv2/0.0.0 (https://github.com/OAuthority/AWBv2)";
+    
     /// <summary>
     /// The url of the wiki
     /// </summary>
@@ -136,7 +142,9 @@ public class Wiki
     private async Task DetermineScriptPathAsync()
     {
         using HttpClient httpClient = new HttpClient();
-
+        
+        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
+        
         // Check /w/ path
         string testUrlW = $"{Url}/w/{ApiPHP}?action=query&meta=siteinfo&format=json";
         HttpResponseMessage responseW = await httpClient.GetAsync(testUrlW);

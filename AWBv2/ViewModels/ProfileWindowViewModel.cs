@@ -4,6 +4,7 @@ using ReactiveUI;
 using ReactiveUI.Fody;
 using System.Reactive;
 using System.Reactive.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using AWBv2.Models;
 using Functions;
@@ -20,6 +21,8 @@ public class ProfileWindowViewModel : ReactiveObject
     [Reactive] public string Password { get; set; }
     [Reactive] public Profile SelectedProfile { get; set; }
     
+    [Reactive] public string Wiki { get; set; }
+    
     [Reactive] public bool SavePassword { get; set; }
     
     // placeholder for any error message that might occur during this process, since Avalonia
@@ -35,9 +38,11 @@ public class ProfileWindowViewModel : ReactiveObject
         var canLogin = this.WhenAnyValue(
             x => x.Username,
             x => x.Password,
-            (user, pass) => 
+            x => x.Wiki,
+            (user, pass, wiki) => 
                 !string.IsNullOrWhiteSpace(user) && 
-                !string.IsNullOrWhiteSpace(pass)
+                !string.IsNullOrWhiteSpace(pass) &&
+                !string.IsNullOrWhiteSpace(wiki)
         );
 
         LoginCommand = ReactiveCommand.CreateFromTask(PerformLogin, canLogin);
@@ -57,16 +62,17 @@ public class ProfileWindowViewModel : ReactiveObject
     /// </summary>
     private async Task PerformLogin()
     {
-        if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password))
+        if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Wiki) )
         {
-            ErrorMessage = "Username and password cannot be empty.";
+            ErrorMessage = "You must provide fields for username, password, and wiki";
             return;
         }
 
         var newProfile = new Profile
         {
             Username = Username,
-            Password = Password 
+            Password = Password,
+            Wiki = Wiki
         };
 
         // igh this is fucked, but basically if we're not saving, lets fool into thinking
@@ -89,7 +95,7 @@ public class ProfileWindowViewModel : ReactiveObject
         SelectedProfile = newProfile;
 
         // dehbug
-        Console.WriteLine($"Logged in as: {SelectedProfile.Username}");
+        Console.WriteLine($"Logged in as: {JsonSerializer.Serialize(SelectedProfile, new JsonSerializerOptions { WriteIndented = true })}");
         
         await CloseWindow.Handle(Unit.Default);
     }

@@ -17,6 +17,7 @@
                     <StackPanel Orientation="Horizontal" Margin="2">
                         <TextBlock Text="{Binding ID}" Width="30"/>
                         <TextBlock Text="{Binding Username}" Margin="10,0" Width="100"/>
+                        <TextBlock Text="{Binding Wiki}" Margin="10, 0" Width="100" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
@@ -24,6 +25,7 @@
         <StackPanel Margin="20" Spacing="10">
             <TextBox Watermark="Username" Text="{Binding Username}"/>
             <TextBox Watermark="Password" PasswordChar="*" Text="{Binding Password}"/>
+            <TextBox Watermark="Wiki Url" Text="{Binding Wiki}" />
             <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" />
             <Button Content="Login" Command="{Binding LoginCommand}"/>
             <StackPanel Orientation="Horizontal" Spacing="10">

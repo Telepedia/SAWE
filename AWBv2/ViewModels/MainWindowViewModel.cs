@@ -14,7 +14,7 @@ public class MainWindowViewModel : ReactiveObject
 {
     private AWBWebBrowser _webBrowser;
     private string _lblUsername = string.Empty;
-    private string _lblProject = "Wikipedia";
+    private string _lblProject = "None";
     private int _lblNewArticles = 0;
     private int _lblIgnoredArticles = 0;
     private int _lblEditCount = 0;
@@ -115,10 +115,14 @@ public class MainWindowViewModel : ReactiveObject
         // this should eventually come AFTER we receive a successful login from the MediaWiki API
         LblUsername = profile.Username;
         
-        Wiki = await Wiki.CreateAsync(profile.Wiki);
-        
-        // debug for now hehe
-        Console.WriteLine($"Logged in as: {JsonSerializer.Serialize(Wiki, new JsonSerializerOptions { WriteIndented = true })}");
-        
+        try
+        {
+            Wiki = await Wiki.CreateAsync(profile.Wiki);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to init wiki: {ex.Message}");
+            throw;
+        }
     }
 }

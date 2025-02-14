@@ -19,12 +19,12 @@ public class Wiki
     /// <summary>
     /// index.php 
     /// </summary>
-    public string IndexPHP { get; private set; } = "index.php";
+    public string IndexPHP { get; private set; } = "/index.php";
 
     /// <summary>
     /// api.php 
     /// </summary>
-    public string ApiPHP { get; private set; } = "api.php";
+    public string ApiPHP { get; private set; } = "/api.php";
 
     /// <summary>
     /// An instance of the API client we should use for all requests to the API
@@ -36,7 +36,7 @@ public class Wiki
     /// <summary>
     /// The script path, whether it is /w/ (/w/index.php) or / (/index.php)
     /// </summary>
-    public string ScriptPath { get; set; } = "/";
+    public string ScriptPath { get; set; } = "";
     
     /// <summary>
     /// The edit summary used when fixing typos
@@ -67,6 +67,11 @@ public class Wiki
     /// The url of the wiki
     /// </summary>
     public string Url { get; private set; }
+    
+    /// <summary>
+    /// The sitename for the wiki to display in the bottom of the container thing of the main window.
+    /// </summary>
+    public string Sitename { get; set; }
     
     /// <summary>
     /// localized names of months
@@ -106,29 +111,12 @@ public class Wiki
         // in the event someone gives https://meta.telepedia.net/ we need to remove the trailing
         // slash to ensure we don't end up with ...net//index.php?
         Url = url.TrimEnd('/');
-        
-        // setup namespaces -- probably cut alot of these down in the future to remove all of the wikipedia 
-        // specific stuff. The vision I have for this is that it isn't overly Wikipedia specific, but I guess,
-        // there would be no harm in this at present. 
-        CanonicalNamespaces[-2] = "Media:";
-        CanonicalNamespaces[-1] = "Special:";
-        CanonicalNamespaces[1] = "Talk:";
-        CanonicalNamespaces[2] = "User:";
-        CanonicalNamespaces[3] = "User talk:";
-        CanonicalNamespaces[4] = "Project:";
-        CanonicalNamespaces[5] = "Project talk:";
-        CanonicalNamespaces[6] = "File:";
-        CanonicalNamespaces[7] = "File talk:";
-        CanonicalNamespaces[8] = "MediaWiki:";
-        CanonicalNamespaces[9] = "MediaWiki talk:";
-        CanonicalNamespaces[10] = "Template:";
-        CanonicalNamespaces[11] = "Template talk:";
-        CanonicalNamespaces[12] = "Help:";
-        CanonicalNamespaces[13] = "Help talk:";
-        CanonicalNamespaces[14] = "Category:";
-        CanonicalNamespaces[15] = "Category talk:";
-        CanonicalNamespaces[828] = "Module:";
-        CanonicalNamespaces[829] = "Module talk:";
+    }
+    
+    public async Task InitializeAsync()
+    {
+        IndexPHP = $"{ScriptPath}index.php";
+        ApiPHP = $"{ScriptPath}api.php";
     }
 
     /// <summary>
@@ -139,10 +127,18 @@ public class Wiki
     /// <returns></returns>
     public static async Task<Wiki> CreateAsync(string url)
     {
-        Wiki wiki = new Wiki(url);
+        var wiki = new Wiki(url);
         wiki.ApiClient = new ApiClient(wiki);
-        await wiki.ApiClient.DetermineScriptPathAsync();
+    
+        try
+        {
+            await wiki.ApiClient.DetermineScriptPathAndLoadSiteInfoAsync();
+            await wiki.InitializeAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("Failed to initialize wiki", ex);
+        }
         return wiki;
     }
-    
 }

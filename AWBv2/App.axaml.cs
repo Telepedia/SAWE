@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
@@ -28,7 +29,6 @@ namespace AWBv2
                 splash.Show();
     
                 Setup setup = new();
-                
                 splash.SetProgress(0);
                 try
                 {

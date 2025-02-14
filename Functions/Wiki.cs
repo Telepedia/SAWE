@@ -1,4 +1,6 @@
-﻿namespace Functions;
+﻿using Functions.API;
+
+namespace Functions;
 
 public class Wiki
 {
@@ -25,9 +27,16 @@ public class Wiki
     public string ApiPHP { get; private set; } = "api.php";
 
     /// <summary>
+    /// An instance of the API client we should use for all requests to the API
+    /// Might need to amend this later but generally this sounds sensible to be here
+    /// since the API is dependent on the wiki
+    /// </summary>
+    public ApiClient ApiClient { get; private set; }
+    
+    /// <summary>
     /// The script path, whether it is /w/ (/w/index.php) or / (/index.php)
     /// </summary>
-    public string ScriptPath { get; private set; } = "/";
+    public string ScriptPath { get; set; } = "/";
     
     /// <summary>
     /// The edit summary used when fixing typos
@@ -57,7 +66,7 @@ public class Wiki
     /// <summary>
     /// The url of the wiki
     /// </summary>
-    public static string Url { get; private set; }
+    public string Url { get; private set; }
     
     /// <summary>
     /// localized names of months
@@ -130,41 +139,10 @@ public class Wiki
     /// <returns></returns>
     public static async Task<Wiki> CreateAsync(string url)
     {
-        var wiki = new Wiki(url);
-        await wiki.DetermineScriptPathAsync();
+        Wiki wiki = new Wiki(url);
+        wiki.ApiClient = new ApiClient(wiki);
+        await wiki.ApiClient.DetermineScriptPathAsync();
         return wiki;
     }
     
-    /// <summary>
-    /// Determine the script path of the wiki so that we know where to send API calls etc.
-    /// </summary>
-    /// <exception cref="InvalidOperationException"></exception>
-    private async Task DetermineScriptPathAsync()
-    {
-        using HttpClient httpClient = new HttpClient();
-        
-        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd(UserAgent);
-        
-        // Check /w/ path
-        string testUrlW = $"{Url}/w/{ApiPHP}?action=query&meta=siteinfo&format=json";
-        HttpResponseMessage responseW = await httpClient.GetAsync(testUrlW);
-
-        if (responseW.IsSuccessStatusCode)
-        {
-            ScriptPath = "/w/";
-            return;
-        }
-
-        // Check root path
-        string testUrlRoot = $"{Url}/{ApiPHP}?action=query&meta=siteinfo&format=json";
-        HttpResponseMessage responseRoot = await httpClient.GetAsync(testUrlRoot);
-
-        if (responseRoot.IsSuccessStatusCode)
-        {
-            ScriptPath = "/";
-            return;
-        }
-
-        throw new InvalidOperationException("Unable to determine script path. AWBv2 only supports script paths of /w/ or / type.");
-    }
 }

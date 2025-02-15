@@ -76,4 +76,63 @@ public class ApiClient
             }
         }
     }
+    /// <summary>
+    /// Return a token for usage for doing a subsequent action (like logging in etc).
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    /// <exception cref="HttpRequestException"></exception>
+    public async Task<string?> GetTokenAsync(string type)
+    {
+        Dictionary<string, string> parameters = new Dictionary<string, string>
+        {
+            { "action", "query " },
+            { "meta", "tokens" },
+            { "format", "json" },
+            { "type", type }
+        };
+        
+        var encodedContent = new FormUrlEncodedContent(parameters);
+        string queryString = await encodedContent.ReadAsStringAsync();
+        string requestUrl = $"{ApiUrl}?{queryString}";
+
+        HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Failed to retrieve token. Status code: {response.StatusCode}");
+        }
+        
+        string jsonResponse = await response.Content.ReadAsStringAsync();
+
+        // try and extract our token from the api response, hopefully MediaWiki returned it PROPERLY
+        using JsonDocument doc = JsonDocument.Parse(jsonResponse);
+        JsonElement root = doc.RootElement;
+        
+        if (root.TryGetProperty("query", out JsonElement queryElement) &&
+            queryElement.TryGetProperty("tokens", out JsonElement tokensElement))
+        {
+            // MediaWiki returns the response as: 
+            // {
+            //     "batchcomplete": "",
+            //     "query": {
+            //         "tokens": {
+            //             "logintoken": "9ed1499d99c0c34c73faa07157b3b6075b427365+\\"
+            //         }
+            //     }
+            // }
+            // where the key is whatever the token we asked for  + "token". Lets try and get that
+            // see more: https://www.mediawiki.org/wiki/API:Tokens#Example
+            string tokenKey = $"{type}token"; 
+            if (tokensElement.TryGetProperty(tokenKey, out JsonElement tokenElement))
+            {
+                return tokenElement.GetString();
+            }
+        }
+        
+        // something went wrong. 
+        // NOTE: the caller is responsible for checking whether this method has returned a value or not
+        // do not always assume that it will. If something goes wrong this function WILL RETURN NULL (or throw an exception)
+        return null; 
+    }
 }

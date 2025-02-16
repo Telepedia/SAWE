@@ -2,6 +2,7 @@
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using ReactiveUI;
 using AWBv2.Controls;
@@ -112,8 +113,6 @@ public class MainWindowViewModel : ReactiveObject
     
     public async Task HandleProfileLogin(Profile profile)
     {
-        // this should eventually come AFTER we receive a successful login from the MediaWiki API
-        LblUsername = profile.Username;
         
         try
         {
@@ -131,5 +130,6 @@ public class MainWindowViewModel : ReactiveObject
         }
 
         LblProject = Wiki.Sitename;
+        LblUsername = Wiki.User.Username;
     }
 }

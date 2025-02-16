@@ -42,10 +42,12 @@ public class ProfileWindowViewModel : ReactiveObject
             x => x.Username,
             x => x.Password,
             x => x.Wiki,
-            (user, pass, wiki) => 
-                !string.IsNullOrWhiteSpace(user) && 
-                !string.IsNullOrWhiteSpace(pass) &&
-                !string.IsNullOrWhiteSpace(wiki)
+            x => x.SelectedProfile,
+            (user, pass, wiki, profile) => 
+                profile != null ||
+                (!string.IsNullOrWhiteSpace(user) && 
+                 !string.IsNullOrWhiteSpace(pass) &&
+                 !string.IsNullOrWhiteSpace(wiki))
         );
 
         LoginCommand = ReactiveCommand.CreateFromTask(PerformLogin, canLogin);
@@ -65,45 +67,52 @@ public class ProfileWindowViewModel : ReactiveObject
     /// </summary>
     private async Task PerformLogin()
     {
-        if (string.IsNullOrWhiteSpace(Username) || string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Wiki) )
+        Profile loginProfile = null;
+
+        // Determine if we're using selected profile (vdouble clicked) or manually entered the data
+        if (SelectedProfile != null)
         {
-            ErrorMessage = "You must provide fields for username, password, and wiki";
-            return;
+            loginProfile = SelectedProfile;
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(Username) || 
+                string.IsNullOrWhiteSpace(Password) || 
+                string.IsNullOrWhiteSpace(Wiki))
+            {
+                ErrorMessage = "You must provide fields for username, password, and wiki";
+                return;
+            }
+
+            loginProfile = new Profile
+            {
+                Username = Username,
+                Password = Password,
+                Wiki = Wiki
+            };
         }
 
-        var newProfile = new Profile
+        // Handle password saving only for NEW profiles
+        if (SavePassword && SelectedProfile == null)
         {
-            Username = Username,
-            Password = Password,
-            Wiki = Wiki
-        };
-
-        // igh this is fucked, but basically if we're not saving, lets fool into thinking
-        // the save result was true anyway, it will be overwritten by the result of AWBPrOfiles.Save() 
-        // if the user has opted for that heh
-        bool saveResult = true; 
-
-        if (SavePassword)
-        {
-            saveResult = await AWBProfiles.Save(newProfile);
-        }
-
-        if (!saveResult)
-        {
-            ErrorMessage = "Failed to save profile. Please try again.";
-            return;
+            var saveResult = await AWBProfiles.Save(loginProfile);
+            if (!saveResult)
+            {
+                ErrorMessage = "Failed to save profile. Please try again.";
+                return;
+            }
         }
         
-        Profiles.Add(newProfile);
-        SelectedProfile = newProfile;
+        if (SelectedProfile != null && !Profiles.Contains(SelectedProfile))
+        {
+            Profiles.Add(SelectedProfile);
+        }
 
-        // dehbug
-        Console.WriteLine($"Logged in as: {JsonSerializer.Serialize(SelectedProfile, new JsonSerializerOptions { WriteIndented = true })}");
-
-        // notify the main window that the login was successful, and 
-        // we can call the API on the wiki to try and figure shit out 
-        await LoginSuccess.Handle(SelectedProfile);
+        // deeebug for now
+        Console.WriteLine($"Logged in as: {JsonSerializer.Serialize(loginProfile, 
+            new JsonSerializerOptions { WriteIndented = true })}");
         
+        await LoginSuccess.Handle(loginProfile);
         await CloseWindow.Handle(Unit.Default);
     }
 
@@ -164,4 +173,5 @@ public class ProfileWindowViewModel : ReactiveObject
             Console.WriteLine(SelectedProfile.ID);
         }
     }
+    
 }

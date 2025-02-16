@@ -38,6 +38,7 @@
         <PackageReference Include="Avalonia.Fonts.Inter" Version="11.1.0" />
         <!-- Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration. -->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0" />
+        <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.2.0.8" />
         <PackageReference Include="CefGlue.Avalonia" Version="120.6099.210" />
         <PackageReference Include="CefGlue.Common" Version="120.6099.210" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />

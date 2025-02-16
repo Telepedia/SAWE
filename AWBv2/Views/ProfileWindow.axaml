@@ -9,15 +9,25 @@
         d:DesignWidth="400" d:DesignHeight="200"
         x:Class="AWBv2.Views.ProfileWindow"
         x:DataType="vm:ProfileWindowViewModel"
+        xmlns:i="clr-namespace:Avalonia.Xaml.Interactivity;assembly=Avalonia.Xaml.Interactivity"
+        xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
         Title="Login">
     <DockPanel>
-        <ListBox ItemsSource="{Binding Profiles}" Margin="5" SelectedItem="{Binding SelectedProfile}">
+        <ListBox ItemsSource="{Binding Profiles}" Margin="5" 
+                 SelectedItem="{Binding SelectedProfile}">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Profile">
                     <StackPanel Orientation="Horizontal" Margin="2">
+                        <i:Interaction.Behaviors>
+                            <ia:EventTriggerBehavior EventName="DoubleTapped">
+                                <ia:InvokeCommandAction 
+                                    Command="{Binding $parent.((vm:ProfileWindowViewModel)DataContext).LoginCommand, Mode=OneWay}" 
+                                    CommandParameter="{Binding}" />
+                            </ia:EventTriggerBehavior>
+                        </i:Interaction.Behaviors>
                         <TextBlock Text="{Binding ID}" Width="30"/>
                         <TextBlock Text="{Binding Username}" Margin="10,0" Width="100"/>
-                        <TextBlock Text="{Binding Wiki}" Margin="10, 0" Width="100" />
+                        <TextBlock Text="{Binding Wiki}" Margin="10, 0" Width="100"/>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>

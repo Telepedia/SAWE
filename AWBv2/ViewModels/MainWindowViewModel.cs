@@ -23,7 +23,7 @@ public class MainWindowViewModel : ReactiveObject
     private int _lblTimer = 0;
     private bool _isMinorEdit = false;
 
-    public Wiki Wiki { get; set; }
+    private Wiki Wiki { get; set; }
     
     public ReactiveCommand<Unit, Unit> OpenProfileWindow { get; }
     public ReactiveCommand<Unit, Unit> RequestClose { get; }
@@ -118,11 +118,18 @@ public class MainWindowViewModel : ReactiveObject
         try
         {
             Wiki = await Wiki.CreateAsync(profile.Wiki);
+            await Wiki.ApiClient.LoginUserAsync(profile.Username, profile.Password);
+            await Wiki.ApiClient.FetchUserInformationAsync();
+            
+            // deeeeeeebug
+            Console.WriteLine(JsonSerializer.Serialize(Wiki.User, new JsonSerializerOptions { WriteIndented = true }));
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Failed to init wiki: {ex.Message}");
             throw;
         }
+
+        LblProject = Wiki.Sitename;
     }
 }

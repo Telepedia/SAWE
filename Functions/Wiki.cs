@@ -101,7 +101,12 @@ public class Wiki
     /// Gets the language code, e.g. "en".
     /// </summary>
     public string LangCode { get; internal set; }
-    
+
+    /// <summary>
+    /// The user we are logged in as.
+    /// </summary>
+    public User User { get; set; }
+
     /// <summary>
     /// Private constructor -- call the factory method since constructors CANNOT handle async operations.
     /// </summary>
@@ -113,7 +118,7 @@ public class Wiki
         Url = url.TrimEnd('/');
     }
     
-    public async Task InitializeAsync()
+    private void InitializeAsync()
     {
         IndexPHP = $"{ScriptPath}index.php";
         ApiPHP = $"{ScriptPath}api.php";
@@ -133,7 +138,7 @@ public class Wiki
         try
         {
             await wiki.ApiClient.DetermineScriptPathAndLoadSiteInfoAsync();
-            await wiki.InitializeAsync();
+            wiki.InitializeAsync();
         }
         catch (Exception ex)
         {

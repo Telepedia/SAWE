@@ -31,7 +31,7 @@
     </Window.ContextMenu>
     
     <DockPanel LastChildFill="True">
-        <Menu DockPanel.Dock="Top" Background="#FAFAFA" Foreground="black">
+        <Menu DockPanel.Dock="Top" Background="#FAFAFA" Foreground="black" Padding="0, 5, 0, 5">
             <MenuItem Header="_File" Foreground="Black">
                 <MenuItem Header="_Profiles" Command="{Binding OpenProfileWindow}" />
                 <MenuItem Header="_Exit" Command="{Binding RequestClose}"/>

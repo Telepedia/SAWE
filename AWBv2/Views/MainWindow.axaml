@@ -69,7 +69,7 @@
 
             <Panel Grid.Column="0"  Background="#f3f6f4">
                 <Label>Make list</Label>
-                
+                <local:MakeList></local:MakeList>
             </Panel>
             <Panel Grid.Column="2" Background="#f3f6f4">
                 <TextBox>Panel 2</TextBox>

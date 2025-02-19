@@ -6,10 +6,9 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="AWBv2.Controls.MakeList"
              x:DataType="viewModels:MakeListViewModel">
-    <Grid ShowGridLines="True">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -23,15 +22,27 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <TextBox Grid.Column="0" Watermark="Add page manually" Margin="5" Padding="5" Text="{Binding PageTitle, Mode=TwoWay}" />
-            <Button Grid.Column="1" Content="Add" Margin="5" Padding="5"/>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <TextBox Grid.Column="0" Grid.Row="0" Watermark="Add page manually" Margin="5" Padding="5" Text="{Binding PageTitle, Mode=TwoWay}" />
+            <Button Grid.Column="1" Grid.Row="0" Content="Add" Margin="5" Padding="5" Command="{Binding AddPageCommand}"/>
+            
+            <ComboBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding MakeOptions}" SelectedItem="{Binding SelectedMakeOption, Mode=TwoWay}" Margin="5" />
+            <TextBox Grid.Row="2" Grid.Column="0"
+                     Watermark="Enter additional info" Margin="5" Padding="5"
+                     Text="{Binding MakeOptionText, Mode=TwoWay}"
+                     IsVisible="{Binding ShowAdditionalTextBox}"/>
         </Grid>
         
-        <ListBox x:Name="PagesList" Grid.Row="1" Grid.Column="0"
-                 ItemsSource="{Binding Pages}"/>
+        <ListBox x:Name="PagesList" Grid.Row="1" Grid.Column="0" VerticalAlignment="Stretch"
+                 ItemsSource="{Binding Pages}" Margin="5" SelectedItem="{Binding SelectedPage, Mode=TwoWay}"/>
         
-        <Grid Grid.Row="3" Grid.Column="0">
-            <Button Content="Remove" Margin="5"/>
+        <Grid Grid.Row="2" Grid.Column="0">
+            <Button Content="Remove" Margin="5" Command="{Binding RemovePageCommand}" />
         </Grid>
         </Grid>
 </UserControl>

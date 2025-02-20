@@ -8,21 +8,22 @@ using ReactiveUI;
 using AWBv2.Controls;
 using AWBv2.Models;
 using Functions;
+using ReactiveUI.Fody.Helpers;
 
 namespace AWBv2.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
 {
     private AWBWebBrowser _webBrowser;
-    private string _lblUsername = string.Empty;
-    private string _lblProject = "None";
-    private int _lblNewArticles = 0;
-    private int _lblIgnoredArticles = 0;
-    private int _lblEditCount = 0;
-    private int _lblEditsPerMin = 0;
-    private int _lblPagesPerMin = 0;
-    private int _lblTimer = 0;
-    private bool _isMinorEdit = false;
+    [Reactive] public bool IsMinorEdit { get; set; } = false;
+    [Reactive] public string LblUsername { get; set; } = string.Empty;
+    [Reactive] public string LblProject { get; set; } = string.Empty;
+    [Reactive] public int LblNewArticles { get; set; } = 0;
+    [Reactive] public int LblIgnoredArticles { get; set; } = 0;
+    [Reactive] public int LblEditCount { get; set; } = 0;
+    [Reactive] public int LblEditsPerMin { get; set; } = 0;
+    [Reactive] public int LblPagesPerMin { get; set; } = 0;
+    [Reactive] public int LblTimer { get; set; } = 0;
 
     private Wiki Wiki { get; set; }
     
@@ -36,61 +37,7 @@ public class MainWindowViewModel : ReactiveObject
         get => _webBrowser ??= new AWBWebBrowser();
         set => this.RaiseAndSetIfChanged(ref _webBrowser, value);
     }
-
-    public bool IsMinorEdit
-    {
-        get => _isMinorEdit;
-        set => this.RaiseAndSetIfChanged(ref _isMinorEdit, value);
-    }
-
-    public string LblUsername
-    {
-        get => _lblUsername;
-        set => this.RaiseAndSetIfChanged(ref _lblUsername, value);
-    }
-
-    public string LblProject
-    {
-        get => _lblProject;
-        set => this.RaiseAndSetIfChanged(ref _lblProject, value);
-    }
-
-    public int LblNewArticles
-    {
-        get => _lblNewArticles;
-        set => this.RaiseAndSetIfChanged(ref _lblNewArticles, value);
-    }
-
-    public int LblIgnoredArticles
-    {
-        get => _lblIgnoredArticles;
-        set => this.RaiseAndSetIfChanged(ref _lblIgnoredArticles, value);
-    }
-
-    public int LblEditCount
-    {
-        get => _lblEditCount;
-        set => this.RaiseAndSetIfChanged(ref _lblEditCount, value);
-    }
-
-    public int LblEditsPerMin
-    {
-        get => _lblEditsPerMin;
-        set => this.RaiseAndSetIfChanged(ref _lblEditsPerMin, value);
-    }
-
-    public int LblPagesPerMin
-    {
-        get => _lblPagesPerMin;
-        set => this.RaiseAndSetIfChanged(ref _lblPagesPerMin, value);
-    }
-
-    public int LblTimer
-    {
-        get => _lblTimer;
-        set => this.RaiseAndSetIfChanged(ref _lblTimer, value);
-    }
-
+    
     public MainWindowViewModel()
     {
         ShowProfileWindowInteraction = new Interaction<ProfileWindowViewModel, Unit>();

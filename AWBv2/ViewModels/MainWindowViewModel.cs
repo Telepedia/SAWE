@@ -40,6 +40,8 @@ public class MainWindowViewModel : ReactiveObject
     
     [Reactive] public MakeListViewModel MakeListViewModel { get; set; }
     
+    [Reactive] public ProcessOptionsViewModel ProcessOptionsViewModel { get; set; }
+    
     public MainWindowViewModel()
     {
         ShowProfileWindowInteraction = new Interaction<ProfileWindowViewModel, Unit>();
@@ -48,6 +50,7 @@ public class MainWindowViewModel : ReactiveObject
         OpenProfileWindow = ReactiveCommand.CreateFromTask(ShowProfileWindow);
         RequestClose = ReactiveCommand.CreateFromTask(CloseWindow);
         MakeListViewModel = new MakeListViewModel();
+        ProcessOptionsViewModel = new ProcessOptionsViewModel();
     }
 
     private async Task CloseWindow()

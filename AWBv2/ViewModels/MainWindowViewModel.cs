@@ -38,6 +38,8 @@ public class MainWindowViewModel : ReactiveObject
         set => this.RaiseAndSetIfChanged(ref _webBrowser, value);
     }
     
+    [Reactive] public MakeListViewModel MakeListViewModel { get; set; }
+    
     public MainWindowViewModel()
     {
         ShowProfileWindowInteraction = new Interaction<ProfileWindowViewModel, Unit>();
@@ -45,6 +47,7 @@ public class MainWindowViewModel : ReactiveObject
 
         OpenProfileWindow = ReactiveCommand.CreateFromTask(ShowProfileWindow);
         RequestClose = ReactiveCommand.CreateFromTask(CloseWindow);
+        MakeListViewModel = new MakeListViewModel();
     }
 
     private async Task CloseWindow()
@@ -69,6 +72,7 @@ public class MainWindowViewModel : ReactiveObject
             
             // deeeeeeebug
             Console.WriteLine(JsonSerializer.Serialize(Wiki.User, new JsonSerializerOptions { WriteIndented = true }));
+            MakeListViewModel.Initialize(Wiki);
         }
         catch (Exception ex)
         {

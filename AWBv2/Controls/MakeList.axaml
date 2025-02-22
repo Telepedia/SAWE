@@ -32,6 +32,7 @@
             <Button Grid.Column="1" Grid.Row="0" Content="Add" Margin="5" Padding="5" Command="{Binding AddPageCommand}"/>
             
             <ComboBox Grid.Column="0" Grid.Row="1" ItemsSource="{Binding MakeOptions}" SelectedItem="{Binding SelectedMakeOption, Mode=TwoWay}" Margin="5" />
+            <Button Grid.Column="1" Grid.Row="1" Content="Make" Margin="5" Padding="5" Command="{Binding MakePageListCommand}" />
             <TextBox Grid.Row="2" Grid.Column="0"
                      Watermark="Enter additional info" Margin="5" Padding="5"
                      Text="{Binding MakeOptionText, Mode=TwoWay}"

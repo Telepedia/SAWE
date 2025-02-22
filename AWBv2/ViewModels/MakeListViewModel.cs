@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Reactive;
+using System.Reactive.Linq;
+using System.Threading.Tasks;
+using Functions;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -9,6 +12,12 @@ namespace AWBv2.ViewModels;
 
 public class MakeListViewModel : ReactiveObject
 {
+
+    /// <summary>
+    /// Our wiki property; this is really fucked because I don't really understand how to get an instance
+    /// </summary>
+    [Reactive] private Wiki Wiki { get; set; }
+    
     /// <summary>
     /// Track all of the pages in the list within a collection
     /// </summary>
@@ -67,8 +76,11 @@ public class MakeListViewModel : ReactiveObject
     /// </summary>
     [Reactive] public bool ShowAdditionalTextBox { get; private set; }
     
+    public ReactiveCommand<Unit, Unit> MakePageListCommand { get; private set; }
+    
     public MakeListViewModel()
     {
+        
         // only allow the button to be clicked if there is a value in the PageTitle field?!
         IObservable<bool> canAddPage = this.WhenAnyValue(
             x => x.PageTitle,  
@@ -95,6 +107,19 @@ public class MakeListViewModel : ReactiveObject
             "Random Pages"
         };
         
+        // only allow the 'make' button to be clicked under certain circumstances
+        // @TODO: this needs to be tweaked a bit because at present it is immediately clickable
+        // once the wiki object has been set onto the view model. It shouldn't really be like that
+        // it should only be clickable:
+        // - if the option is not "none", but it is within the criteria that we need to provide input and input has been
+        //   provided
+        // - if the option is not one, and it is in the critera where we don't need any additional input (all pages, etc)
+        var canMakeList = this
+            .WhenAnyValue(x => x.Wiki)
+            .Select(wiki => wiki != null);
+        
+        MakePageListCommand = ReactiveCommand.CreateFromTask(MakeList, canMakeList);
+        
         // when the value of the selection box on the make list control changes, update the thingy  property so it shows
         this.WhenAnyValue(x => x.SelectedMakeOption)
             .Subscribe(option =>
@@ -103,7 +128,16 @@ public class MakeListViewModel : ReactiveObject
                 MakeOptionText = string.Empty;
             });
     }
-
+    
+    /// <summary>
+    /// Dirty way for us to access the Wiki from this class
+    /// </summary>
+    /// <param name="wiki"></param>
+    public void Initialize(Wiki wiki)
+    {
+        Wiki = wiki;
+    }
+    
     /// <summary>
     /// Manually add a page to the listbox to be worked on
     /// </summary>
@@ -127,4 +161,47 @@ public class MakeListViewModel : ReactiveObject
             SelectedPage = null;
         }
     }
+
+    /// <summary>
+    /// Make the list of articles to work on
+    /// @TODO: decide whether we want to create an article class now for all of them or only when we are working on
+    /// a specific article?
+    /// </summary>
+    private async Task MakeList()
+    {
+        Console.WriteLine(this.Wiki);
+        if (Wiki == null)
+        {
+            Console.WriteLine("Error: Wiki is null. Ensure Initialize() was called first.");
+            return;
+        }
+
+        if (Wiki.ApiClient == null)
+        {
+            Console.WriteLine("Error: Wiki.ApiClient is null. Login might have failed.");
+            return;
+        }
+
+        if (SelectedMakeOption == "Category" && !string.IsNullOrWhiteSpace(MakeOptionText))
+        {
+            try
+            {
+                List<string> pages = await Wiki.ApiClient.GetPagesInCategoryAsync(MakeOptionText);
+
+                if (pages.Count > 0)
+                {
+                    Pages.Clear();
+                    foreach (string page in pages)
+                    {
+                        Pages.Add(page);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching pages: {ex.Message}");
+            }
+        }
+    }
+
 }

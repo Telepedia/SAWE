@@ -241,6 +241,80 @@ public class ApiClient
 
         _wiki.User = new User(username, isBot, isBlocked, groups, rights);
     }
-    
-    
+
+    /// <summary>
+    /// Get all of the pages within a category
+    /// </summary>
+    /// <param name="category"></param>
+    /// <returns></returns>
+    /// <exception cref="HttpRequestException"></exception>
+   public async Task<List<string>> GetPagesInCategoryAsync(string category) 
+   {
+    // add the category prefix if it isn't there
+    // see: https://www.mediawiki.org/wiki/API:Categorymembers for more info
+    if (!category.StartsWith("Category:"))
+    {
+        category = "Category:" + category;
+    }
+
+    var pages = new List<string>();
+    string? cmContinue = null;
+
+    do
+    {
+        var parameters = new Dictionary<string, string>
+        {
+            { "action", "query" },
+            { "list", "categorymembers" },
+            { "cmtitle", category },
+            { "cmtype", "page" },
+            { "cmlimit", "500" }, 
+            { "format", "json" }
+        };
+
+        if (!string.IsNullOrEmpty(cmContinue))
+        {
+            parameters["cmcontinue"] = cmContinue;
+        }
+
+        string queryString = string.Join("&", parameters.Select(kvp => $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value)}"));
+        string requestUrl = $"{ApiUrl}?{queryString}";
+
+        HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new HttpRequestException($"Failed to retrieve category members. Status code: {response.StatusCode}");
+        }
+
+        string jsonResponse = await response.Content.ReadAsStringAsync();
+        using JsonDocument doc = JsonDocument.Parse(jsonResponse);
+        JsonElement root = doc.RootElement;
+
+        if (root.TryGetProperty("query", out JsonElement queryElement) &&
+            queryElement.TryGetProperty("categorymembers", out JsonElement membersArray))
+        {
+            foreach (JsonElement member in membersArray.EnumerateArray())
+            {
+                if (member.TryGetProperty("title", out JsonElement titleElement))
+                {
+                    pages.Add(titleElement.GetString() ?? string.Empty);
+                }
+            }
+        }
+
+        // Check if there's a continuation parameter if so we need to go again
+        if (root.TryGetProperty("continue", out JsonElement continueElement) &&
+            continueElement.TryGetProperty("cmcontinue", out JsonElement cmContinueElement))
+        {
+            cmContinue = cmContinueElement.GetString();
+        }
+        else
+        {
+            cmContinue = null;
+        }
+
+    } while (!string.IsNullOrEmpty(cmContinue));
+
+    return pages;
+    }
 }

@@ -1,3 +1,5 @@
+using System.Reactive;
+using AWBv2.Views;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
 
@@ -20,5 +22,23 @@ public class ProcessOptionsViewModel : ReactiveObject
     /// </summary>
     [Reactive] public bool FindAndReplace { get; set; } = false;
     
-    public ProcessOptionsViewModel() {}
+    /// <summary>
+    /// Command that is fired to open the find and replace window, heh.
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> OpenFindReplaceCommand { get; }
+
+    public ProcessOptionsViewModel()
+    {
+        OpenFindReplaceCommand = ReactiveCommand.Create(OpenFindReplace);
+    }
+    
+    /// <summary>
+    /// Open the find and replace (standard) window
+    /// </summary>
+    private void OpenFindReplace()
+    {
+        var window = new FindReplaceWindow();
+        window.Show();
+    }
+    
 }

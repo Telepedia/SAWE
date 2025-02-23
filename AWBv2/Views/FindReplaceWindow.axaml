@@ -1,0 +1,38 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AWBv2.Views.FindReplaceWindow"
+        Title="Find and Replace"
+        xmlns:vm="using:AWBv2.ViewModels"
+        x:DataType="vm:FindReplaceViewModel">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />  
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <DataGrid Grid.Row="0" SelectedItem="{Binding SelectedEntry}" ItemsSource="{Binding Entries}" AutoGenerateColumns="True">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Find" Binding="{Binding Find}" />
+                <DataGridTextColumn Header="Replace" Binding="{Binding Replace}" />
+                
+                <DataGridCheckBoxColumn Header="Case Sensitive" Binding="{Binding CaseSensitive}" />
+                <DataGridCheckBoxColumn Header="Regex" Binding="{Binding Regex}"/>
+                <DataGridCheckBoxColumn Header="MultiLine" Binding="{Binding Multiline}"/>
+                <DataGridCheckBoxColumn Header="SingleLine" Binding="{Binding Singleline}"/>
+                <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding Enabled}"/>
+                
+                <DataGridTextColumn Header="Comment" Binding="{Binding Comment}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Content="Add" Command="{Binding AddEntryCommand}" Width="80" Height="30"/>
+            <Button Content="Remove" Command="{Binding RemoveEntryCommand}" Width="80" Height="30" Margin="10,0,0,0"/>
+        </StackPanel>
+
+    </Grid>
+</Window>

@@ -49,4 +49,8 @@
     <ItemGroup>
         <ProjectReference Include="..\Functions\Functions.csproj" />
     </ItemGroup>
+    
+    <ItemGroup>
+      <Folder Include="Models\" />
+    </ItemGroup>
 </Project>

@@ -54,5 +54,23 @@
                 </ControlTemplate>
             </Setter>
         </Style>
+        <Style Selector="Button.primary">
+            <Setter Property="Background" Value="#007bff"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#0056b3"/>
+        </Style>
+        <Style Selector="Button.primary:pointerover">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="#0056b3"/>
+        </Style>
+        <Style Selector="Button.secondary">
+            <Setter Property="Background" Value="#6c757d"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="#545b62"/>
+        </Style>
+        <Style Selector="Button.secondary:pointerover">
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Background" Value="#545b62"/>
+        </Style>
     </Application.Styles>
 </Application>

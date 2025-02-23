@@ -8,8 +8,14 @@
         xmlns:vm="using:AWBv2.ViewModels"
         x:DataType="vm:FindReplaceViewModel">
 
-    <Grid RowDefinitions="*,Auto">
-        <DataGrid Margin="20" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" GridLinesVisibility="All" SelectedItem="{Binding SelectedEntry}" ItemsSource="{Binding Entries}">
+    <Grid RowDefinitions="Auto,*, Auto">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0, 10, 10, 0">
+            <TextBlock Text="{Binding Entries.Count, StringFormat='Total entries: {0}'}" 
+                       VerticalAlignment="Center" 
+                       Margin="0,0,10,0"/>
+            <Button Classes="secondary" Content="Clear all" Command="{Binding ClearAllCommand}"/>
+        </StackPanel>
+        <DataGrid Grid.Row="1" Margin="10" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" GridLinesVisibility="All" SelectedItem="{Binding SelectedEntry}" ItemsSource="{Binding Entries}">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Find" Width="*" Binding="{Binding Find}" />
                 <DataGridTextColumn Header="Replace" Width="*" Binding="{Binding Replace}" />
@@ -24,12 +30,9 @@
             </DataGrid.Columns>
         </DataGrid>
         
-        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-            <TextBlock Text="{Binding Entries.Count, StringFormat='Total entries: {0}'}" 
-                       VerticalAlignment="Center" 
-                       Margin="0,0,10,0"/>
-            <Button Content="Add" Command="{Binding AddEntryCommand}" Width="80" Height="30"/>
-            <Button Content="Remove" Command="{Binding RemoveEntryCommand}" Width="80" Height="30" Margin="10,0,0,0"/>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <Button Classes="primary" Content="Add" Command="{Binding AddEntryCommand}" Width="80" Height="30"/>
+            <Button Classes="secondary" Content="Remove" Command="{Binding RemoveEntryCommand}" Width="80" Height="30" Margin="10,0,0,0"/>
         </StackPanel>
 
     </Grid>

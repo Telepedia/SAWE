@@ -18,6 +18,8 @@ public class FindReplaceViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> AddEntryCommand { get; }
     public ReactiveCommand<Unit, Unit> RemoveEntryCommand { get; }
 
+    public ReactiveCommand<Unit, Unit> ClearAllCommand { get; }
+    
     public FindReplaceViewModel()
     {
         AddEntryCommand = ReactiveCommand.Create(AddEntry);
@@ -25,9 +27,7 @@ public class FindReplaceViewModel : ReactiveObject
         RemoveEntryCommand = ReactiveCommand.Create(RemoveEntry, 
             this.WhenAnyValue(x => x.SelectedEntry).Select(entry => entry != null));
         
-        Entries.Add(new FindAndReplaceEntry { Find = "old text 1", Replace = "new text 1", CaseSensitive = true });
-        Entries.Add(new FindAndReplaceEntry { Find = "old text 2", Replace = "new text 2", Regex = true });
-        Entries.Add(new FindAndReplaceEntry { Find = "old text 3", Replace = "new text 3", Enabled = false });
+        ClearAllCommand = ReactiveCommand.Create(ClearAll);
     }
     
     /// <summary>
@@ -53,6 +53,14 @@ public class FindReplaceViewModel : ReactiveObject
     {
         if (SelectedEntry != null)
             Entries.Remove(SelectedEntry);
+    }
+
+    /// <summary>
+    /// Remove all the entries from the find and replace collection
+    /// </summary>
+    private void ClearAll()
+    {
+        Entries.Clear();
     }
     
 }

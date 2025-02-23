@@ -20,7 +20,7 @@
                         <CheckBox Content="Find and Replace" IsEnabled="False" IsChecked="{Binding FindAndReplace, Mode=TwoWay}" VerticalAlignment="Center" Grid.Column="0" />
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Grid.Column="1" Spacing="8">
                             <Button Content="Standard"/>
-                            <Button Content="Templates"/>
+                            <Button IsEnabled="False" Content="Templates"/>
                         </StackPanel>
                     </Grid>
                 </HeaderedContentControl>

@@ -27,6 +27,8 @@ public class ProcessOptionsViewModel : ReactiveObject
     /// </summary>
     public ReactiveCommand<Unit, Unit> OpenFindReplaceCommand { get; }
 
+    public FindReplaceViewModel FindReplaceViewModel { get; } = new FindReplaceViewModel();
+    
     public ProcessOptionsViewModel()
     {
         OpenFindReplaceCommand = ReactiveCommand.Create(OpenFindReplace);
@@ -37,7 +39,7 @@ public class ProcessOptionsViewModel : ReactiveObject
     /// </summary>
     private void OpenFindReplace()
     {
-        var window = new FindReplaceWindow();
+        var window = new FindReplaceWindow(FindReplaceViewModel);
         window.Show();
     }
     

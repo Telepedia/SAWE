@@ -8,9 +8,9 @@ namespace AWBv2.Views;
 
 public partial class FindReplaceWindow : ReactiveWindow<FindReplaceViewModel>
 {
-    public FindReplaceWindow()
+    public FindReplaceWindow(FindReplaceViewModel viewModel)
     {
         InitializeComponent();
-        DataContext = new FindReplaceViewModel();
+        DataContext = viewModel;
     }
 }

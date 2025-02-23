@@ -1,6 +1,8 @@
+using System;
 using System.Collections.ObjectModel;
 using System.Reactive;
 using System.Reactive.Linq;
+using AWBv2.Models;
 using Functions;
 using ReactiveUI;
 using ReactiveUI.Fody.Helpers;
@@ -22,6 +24,10 @@ public class FindReplaceViewModel : ReactiveObject
        
         RemoveEntryCommand = ReactiveCommand.Create(RemoveEntry, 
             this.WhenAnyValue(x => x.SelectedEntry).Select(entry => entry != null));
+        
+        Entries.Add(new FindAndReplaceEntry { Find = "old text 1", Replace = "new text 1", CaseSensitive = true });
+        Entries.Add(new FindAndReplaceEntry { Find = "old text 2", Replace = "new text 2", Regex = true });
+        Entries.Add(new FindAndReplaceEntry { Find = "old text 3", Replace = "new text 3", Enabled = false });
     }
     
     /// <summary>
@@ -29,8 +35,14 @@ public class FindReplaceViewModel : ReactiveObject
     /// </summary>
     private void AddEntry()
     {
-        // for some reason this doesn't work quite yet, idk what's happening, but thats for another day.
-        Entries.Add(new FindAndReplaceEntry());
+        try
+        {
+            Entries.Add(new FindAndReplaceEntry());
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error adding entry: {ex}");
+        }
     }
 
     /// <summary>

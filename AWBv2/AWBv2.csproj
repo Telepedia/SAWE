@@ -32,6 +32,7 @@
     
     <ItemGroup>
         <PackageReference Include="Avalonia" Version="11.2.2" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="11.2.2" />
         <PackageReference Include="Avalonia.Desktop" Version="11.2.2" />
         <PackageReference Include="Avalonia.ReactiveUI" Version="11.2.2" />
         <PackageReference Include="Avalonia.Themes.Fluent" Version="11.1.0" />
@@ -47,9 +48,5 @@
     
     <ItemGroup>
         <ProjectReference Include="..\Functions\Functions.csproj" />
-    </ItemGroup>
-    
-    <ItemGroup>
-      <Folder Include="Models\" />
     </ItemGroup>
 </Project>

@@ -8,28 +8,26 @@
         xmlns:vm="using:AWBv2.ViewModels"
         x:DataType="vm:FindReplaceViewModel">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />  
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        
-        <DataGrid Grid.Row="0" SelectedItem="{Binding SelectedEntry}" ItemsSource="{Binding Entries}" AutoGenerateColumns="True">
+    <Grid RowDefinitions="*,Auto">
+        <DataGrid Margin="20" AutoGenerateColumns="False" BorderThickness="1" BorderBrush="Gray" GridLinesVisibility="All" SelectedItem="{Binding SelectedEntry}" ItemsSource="{Binding Entries}">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Find" Binding="{Binding Find}" />
-                <DataGridTextColumn Header="Replace" Binding="{Binding Replace}" />
-                
-                <DataGridCheckBoxColumn Header="Case Sensitive" Binding="{Binding CaseSensitive}" />
-                <DataGridCheckBoxColumn Header="Regex" Binding="{Binding Regex}"/>
-                <DataGridCheckBoxColumn Header="MultiLine" Binding="{Binding Multiline}"/>
-                <DataGridCheckBoxColumn Header="SingleLine" Binding="{Binding Singleline}"/>
-                <DataGridCheckBoxColumn Header="Enabled" Binding="{Binding Enabled}"/>
-                
-                <DataGridTextColumn Header="Comment" Binding="{Binding Comment}"/>
+                <DataGridTextColumn Header="Find" Width="*" Binding="{Binding Find}" />
+                <DataGridTextColumn Header="Replace" Width="*" Binding="{Binding Replace}" />
+        
+                <DataGridCheckBoxColumn Header="Case Sensitive" Width="Auto" Binding="{Binding CaseSensitive}" />
+                <DataGridCheckBoxColumn Header="Regex" Width="Auto" Binding="{Binding Regex}"/>
+                <DataGridCheckBoxColumn Header="MultiLine" Width="Auto" Binding="{Binding MultiLine}"/>
+                <DataGridCheckBoxColumn Header="SingleLine" Width="Auto" Binding="{Binding SingleLine}"/>
+                <DataGridCheckBoxColumn Header="Enabled" Width="Auto" Binding="{Binding Enabled}"/>
+        
+                <DataGridTextColumn Header="Comment" Width="2*" Binding="{Binding Comment}"/>
             </DataGrid.Columns>
         </DataGrid>
         
         <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+            <TextBlock Text="{Binding Entries.Count, StringFormat='Total entries: {0}'}" 
+                       VerticalAlignment="Center" 
+                       Margin="0,0,10,0"/>
             <Button Content="Add" Command="{Binding AddEntryCommand}" Width="80" Height="30"/>
             <Button Content="Remove" Command="{Binding RemoveEntryCommand}" Width="80" Height="30" Margin="10,0,0,0"/>
         </StackPanel>

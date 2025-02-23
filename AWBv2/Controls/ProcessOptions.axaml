@@ -11,13 +11,13 @@
             <StackPanel Spacing="8">
                 <HeaderedContentControl Header="Automatic changes">
                     <StackPanel Spacing="8">
-                        <CheckBox Content="General fixes" IsChecked="{Binding GeneralFixes, Mode=TwoWay}"/>
-                        <CheckBox Content="Unicodify whole page" IsChecked="{Binding UnicodifyWholePage, Mode=TwoWay}" />
+                        <CheckBox Content="General fixes" IsEnabled="False" IsChecked="{Binding GeneralFixes, Mode=TwoWay}"/>
+                        <CheckBox Content="Unicodify whole page" IsEnabled="False" IsChecked="{Binding UnicodifyWholePage, Mode=TwoWay}" />
                     </StackPanel>
                 </HeaderedContentControl>
                 <HeaderedContentControl Header="Find and Replace">
                     <Grid ColumnDefinitions="Auto,*" VerticalAlignment="Center">
-                        <CheckBox Content="Find and Replace" IsChecked="{Binding FindAndReplace, Mode=TwoWay}" VerticalAlignment="Center" Grid.Column="0" />
+                        <CheckBox Content="Find and Replace" IsEnabled="False" IsChecked="{Binding FindAndReplace, Mode=TwoWay}" VerticalAlignment="Center" Grid.Column="0" />
                         <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Grid.Column="1" Spacing="8">
                             <Button Content="Standard"/>
                             <Button Content="Templates"/>

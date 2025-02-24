@@ -1,3 +1,4 @@
+using System;
 using System.Reactive;
 using AWBv2.Views;
 using ReactiveUI;
@@ -29,9 +30,17 @@ public class ProcessOptionsViewModel : ReactiveObject
 
     public FindReplaceViewModel FindReplaceViewModel { get; } = new FindReplaceViewModel();
     
+    /// <summary>
+    /// Command emitted when the start button is clicked
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> StartProcessingCommand { get; }
+
+    [Reactive] public string EditSummary { get; set; } = string.Empty;
+    
     public ProcessOptionsViewModel()
     {
         OpenFindReplaceCommand = ReactiveCommand.Create(OpenFindReplace);
+        StartProcessingCommand = ReactiveCommand.Create(() => { });
     }
     
     /// <summary>

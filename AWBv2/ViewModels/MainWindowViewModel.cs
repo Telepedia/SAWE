@@ -27,9 +27,8 @@ public class MainWindowViewModel : ReactiveObject
     [Reactive] public int LblEditsPerMin { get; set; } = 0;
     [Reactive] public int LblPagesPerMin { get; set; } = 0;
     [Reactive] public int LblTimer { get; set; } = 0;
-
     [Reactive] public ObservableCollection<Article> Articles { get; set; } = new();
-    
+    [Reactive] public string EditBoxContent { get; set; } = string.Empty;
     private Wiki Wiki { get; set; }
     
     public ReactiveCommand<Unit, Unit> OpenProfileWindow { get; }
@@ -58,7 +57,8 @@ public class MainWindowViewModel : ReactiveObject
         RequestClose = ReactiveCommand.CreateFromTask(CloseWindow);
         MakeListViewModel = new MakeListViewModel();
         ProcessOptionsViewModel = new ProcessOptionsViewModel();
-        ProcessArticlesCommand = ReactiveCommand.CreateFromTask(ProcessArticlesAsync);
+        
+        ProcessOptionsViewModel.StartProcessingCommand.Subscribe(async _ => await ProcessArticlesAsync());
     }
 
     private async Task CloseWindow()
@@ -97,7 +97,10 @@ public class MainWindowViewModel : ReactiveObject
 
     private async Task ProcessArticlesAsync()
     {
-        foreach (string pageTitle in MakeListViewModel.Pages)
+        // we need a copy of the pages collection becasue its not safe to remove from it
+        // whilst it is being iterated over.
+        // maybe we shouldn't be accessing the contents of the view model like this? idek, it works though so fuck it
+        foreach (string pageTitle in MakeListViewModel.Pages.ToList())
         {
             try
             {
@@ -106,12 +109,23 @@ public class MainWindowViewModel : ReactiveObject
                 if (article != null)
                 {
                     Articles.Add(article);
-                
+                    
+                    // set the content for editing, we will need this for later so that we can edit the content
+                    // that SAWE may change.
+                    EditBoxContent = article.OriginalArticleText;
+                    
                     // Print to console as dehbug for naw
                     // @TODO: remove plz
                     Console.WriteLine($"Title: {article.Name}");
                     Console.WriteLine($"Content: {article.OriginalArticleText}");
                     Console.WriteLine($"Protected: {article.Protections.Any()}");
+                    
+                    // simulate a delay
+                    // @TODO: remove and actually implement.
+                    await Task.Delay(5000);
+                    
+                    MakeListViewModel.Pages.Remove(pageTitle);
+                    
                 }
                 else
                 {
@@ -122,7 +136,9 @@ public class MainWindowViewModel : ReactiveObject
             {
                 Console.WriteLine($"Error processing {pageTitle}: {ex.Message}");
             }
-
+            
+            // reset the edit box to an empty string.
+            EditBoxContent = string.Empty;
         }
     }
 }

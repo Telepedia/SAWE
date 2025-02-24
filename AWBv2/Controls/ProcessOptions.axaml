@@ -37,7 +37,19 @@
             <TextBox Text="Tab4" />
         </TabItem>
         <TabItem Header="Start" VerticalContentAlignment="Center">
-            <TextBox Text="Tab5" />
+            <StackPanel Spacing="8">
+                <Grid ColumnDefinitions="Auto,*">
+                    <Label Content="Edit Summary:" VerticalAlignment="Center" Grid.Column="0" />
+                    <TextBox Text="{Binding EditSummary}" Grid.Column="1" HorizontalAlignment="Stretch"/>
+                </Grid>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                    <Button Content="Start" Classes="primary" Command="{Binding StartProcessingCommand}" />
+                    <Button Content="Stop" />
+                    <Button Content="Skip" />
+                </StackPanel>
+            </StackPanel>
+
         </TabItem>
     </TabControl>
 </UserControl>

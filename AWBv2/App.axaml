@@ -72,5 +72,48 @@
             <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Background" Value="#545b62"/>
         </Style>
+        <Style Selector="TabItem">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="CornerRadius" Value="5,5,0,0"/>
+            <Setter Property="Margin" Value="2"/>
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}" />
+        </Style>
+        <Style Selector="TabItem">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Background" Value="#FAFAFA"/>
+            <Setter Property="BorderBrush" Value="#FAFAFA"/>
+            <Setter Property="BorderThickness" Value="2,2,0,2"/>
+            <Setter Property="CornerRadius" Value="3,3,0,0"/>
+            <Setter Property="Foreground" Value="Black" />
+            <Setter Property="Margin" Value="0, 0, 2, 0" />
+            <Setter Property="FontSize" Value="{DynamicResource FontSizeNormal}" />
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <ContentPresenter Name="PART_Header"
+                                      Background="{TemplateBinding Background}"
+                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                      CornerRadius="{TemplateBinding CornerRadius}"
+                                      Margin="{TemplateBinding Margin}"
+                                      Padding="{TemplateBinding Padding}"
+                                      Content="{TemplateBinding Header}"
+                                      ContentTemplate="{TemplateBinding HeaderTemplate}"
+                                      TextBlock.Foreground="{TemplateBinding Foreground}"
+                                      TextBlock.FontSize="{TemplateBinding FontSize}"/>
+                </ControlTemplate>
+            </Setter>
+        </Style>
+
+        <Style Selector="TabItem:selected">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Background" Value="LightGray"/>
+            <Setter Property="BorderBrush" Value="LightGray"/>
+            <Setter Property="BorderThickness" Value="2,2,0,2"/>
+        </Style>
+        
     </Application.Styles>
 </Application>

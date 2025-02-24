@@ -5,19 +5,31 @@ namespace Functions.Article;
 public class Article
 {
     #region properties/fields
-    protected string ArticleText { get; private set; }
-    protected string OriginalArticleText { get; set; }
+    public string ArticleText { get; private set; }
+    public string OriginalArticleText { get; set; }
     public string Name { get; set; }
     private StringBuilder _editSummary = new();
     public string EditSummary => _editSummary.ToString();
     public bool Skipped { get; private set; }
     public string SkippedReason { get; private set; } = string.Empty;
+    public int PageId { get; set; }
+    public string ContentModel { get; set; }
+    public string PageLanguage { get; set; }
+    public string PageLanguageHtmlCode { get; set; }
+    public string PageLanguageDir { get; set; }
+    public string LastTouched { get; set; }
+    public int LastRevisionId { get; set; }
+    public int Length { get; set; }
+    public List<Protection> Protections { get; set; }
+    public string DisplayTitle { get; set; }
+    public string RevisionTimestamp { get; set; }
     #endregion
     
     public Article(string name, string text)
     {
         OriginalArticleText = ArticleText = text;
         Name = name;
+        Protections = new List<Protection>();
     }
 
     /// <summary>

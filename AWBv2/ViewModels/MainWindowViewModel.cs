@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
 using System.Text.Json;
@@ -8,6 +10,7 @@ using ReactiveUI;
 using AWBv2.Controls;
 using AWBv2.Models;
 using Functions;
+using Functions.Article;
 using ReactiveUI.Fody.Helpers;
 
 namespace AWBv2.ViewModels;
@@ -25,6 +28,8 @@ public class MainWindowViewModel : ReactiveObject
     [Reactive] public int LblPagesPerMin { get; set; } = 0;
     [Reactive] public int LblTimer { get; set; } = 0;
 
+    [Reactive] public ObservableCollection<Article> Articles { get; set; } = new();
+    
     private Wiki Wiki { get; set; }
     
     public ReactiveCommand<Unit, Unit> OpenProfileWindow { get; }
@@ -42,6 +47,8 @@ public class MainWindowViewModel : ReactiveObject
     
     [Reactive] public ProcessOptionsViewModel ProcessOptionsViewModel { get; set; }
     
+    public ReactiveCommand<Unit, Unit> ProcessArticlesCommand { get; }
+    
     public MainWindowViewModel()
     {
         ShowProfileWindowInteraction = new Interaction<ProfileWindowViewModel, Unit>();
@@ -51,6 +58,7 @@ public class MainWindowViewModel : ReactiveObject
         RequestClose = ReactiveCommand.CreateFromTask(CloseWindow);
         MakeListViewModel = new MakeListViewModel();
         ProcessOptionsViewModel = new ProcessOptionsViewModel();
+        ProcessArticlesCommand = ReactiveCommand.CreateFromTask(ProcessArticlesAsync);
     }
 
     private async Task CloseWindow()
@@ -85,5 +93,36 @@ public class MainWindowViewModel : ReactiveObject
 
         LblProject = Wiki.Sitename;
         LblUsername = Wiki.User.Username;
+    }
+
+    private async Task ProcessArticlesAsync()
+    {
+        foreach (string pageTitle in MakeListViewModel.Pages)
+        {
+            try
+            {
+                var article = await Wiki.ApiClient.GetArticleAsync(pageTitle);
+                
+                if (article != null)
+                {
+                    Articles.Add(article);
+                
+                    // Print to console as dehbug for naw
+                    // @TODO: remove plz
+                    Console.WriteLine($"Title: {article.Name}");
+                    Console.WriteLine($"Content: {article.OriginalArticleText}");
+                    Console.WriteLine($"Protected: {article.Protections.Any()}");
+                }
+                else
+                {
+                    ++LblIgnoredArticles;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing {pageTitle}: {ex.Message}");
+            }
+
+        }
     }
 }

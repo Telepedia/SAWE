@@ -2,6 +2,9 @@ using System.Net;
 using System.Net.Security;
 using System.Security.Authentication;
 using System.Text.Json;
+using Functions.Article;
+using Newtonsoft.Json;
+using JsonException = Newtonsoft.Json.JsonException;
 
 namespace Functions.API;
 
@@ -316,5 +319,87 @@ public class ApiClient
     } while (!string.IsNullOrEmpty(cmContinue));
 
     return pages;
+    }
+
+    /// <summary>
+    /// Try and get the information about the page we want to work on, and create an instance of the Article class
+    /// so that we may better understand its structure (and also get the content etc.)
+    /// </summary>
+    /// <param name="title"></param>
+    /// <returns></returns>
+    /// <exception cref="HttpRequestException"></exception>
+    public async Task<Article.Article> GetArticleAsync(string title)
+    {
+
+        Dictionary<String, String> parameters = new Dictionary<string, string>
+        {
+            { "action", "query" },
+            { "format", "json" },
+            { "prop", "info|revisions" },
+            { "meta", "tokens" },
+            { "titles", title },
+            { "formatversion", "2" },
+            { "inprop", "protection|displatitle" },
+            { "rvprop", "content|timestamp" },
+            { "rvslots", "main" },
+            { "type", "csrf" }
+        };
+
+        string queryString = string.Join("&",
+            parameters.Select(kvp => $"{Uri.EscapeDataString(kvp.Key)}={Uri.EscapeDataString(kvp.Value)}"));
+        string requestUrl = $"{ApiUrl}?{queryString}";
+
+        try
+        {
+            HttpResponseMessage response = await _httpClient.GetAsync(requestUrl);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(
+                    $"Failed to retrieve article information. Status code: {response.StatusCode}");
+            }
+
+            string json = await response.Content.ReadAsStringAsync();
+            var apiResponse = JsonConvert.DeserializeObject<ApiResponse>(json);
+
+            var page = apiResponse?.Query?.Pages?.FirstOrDefault();
+            // the page wasn't found, for some reason -- need to handle this better, hehe but just return null for now!
+            // caller responsible for checking for null and skipping the page
+            if (page == null || page.PageId <= 0) return null;
+
+            var revision = page.Revisions?.FirstOrDefault();
+            string content = revision?.Slots?.GetValueOrDefault("main")?.Content ?? string.Empty;
+
+            // try and create a new article
+            Article.Article article = new Article.Article(page.Title, content)
+            {
+                PageId = page.PageId,
+                ContentModel = page.ContentModel,
+                PageLanguage = page.PageLanguage,
+                PageLanguageHtmlCode = page.PageLanguageHtmlCode,
+                PageLanguageDir = page.PageLanguageDir,
+                LastTouched = page.Touched,
+                LastRevisionId = page.LastRevId,
+                Length = page.Length,
+                Protections = page.Protection ?? new List<Protection>(),
+                DisplayTitle = page.DisplayTitle,
+                RevisionTimestamp = revision?.Timestamp
+            };
+
+            return article;
+        }
+        catch (HttpRequestException ex)
+        {
+            // http error such as 403 etc.
+            // the caller is responsible for checking for null and skipping processing in this instance.
+            Console.WriteLine($"Error fetching page: {ex.Message}");
+            return null;
+        }
+        catch (JsonException ex)
+        {
+            // something fucked happened with the JSON processing, return null, the caller is responsible
+            // for skipping the page in this instance
+            Console.WriteLine($"Error parsing response: {ex.Message}");
+            return null;
+        }
     }
 }

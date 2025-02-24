@@ -75,7 +75,8 @@
                 <local:ProcessOptions DataContext="{Binding ProcessOptionsViewModel}" />
             </Panel>
             <Panel Grid.Column="4" Background="#f3f6f4">
-                <TextBox Background="#f3f6f4">Panel 4</TextBox>
+                <!-- test for now -->
+                <Button Content="Start" Command="{Binding ProcessArticlesCommand}" />
             </Panel>
         </Grid>
     </DockPanel>

@@ -75,7 +75,7 @@
                 <local:ProcessOptions DataContext="{Binding ProcessOptionsViewModel}" />
             </Panel>
             <Panel Grid.Column="4" Background="#f3f6f4">
-                <TextBox Text="{Binding EditBoxContent}" />
+                <TextBox FontFamily="{StaticResource JetBrainsMono}" Text="{Binding EditBoxContent}" />
             </Panel>
         </Grid>
     </DockPanel>

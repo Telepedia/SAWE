@@ -114,6 +114,8 @@
             <Setter Property="BorderBrush" Value="LightGray"/>
             <Setter Property="BorderThickness" Value="2,2,0,2"/>
         </Style>
-        
     </Application.Styles>
+    <Application.Resources>
+        <FontFamily x:Key="JetBrainsMono">avares://AWBv2/Assets/JetBrainsMonoNL-Regular.ttf#JetBrains Mono NL</FontFamily>
+    </Application.Resources>
 </Application>

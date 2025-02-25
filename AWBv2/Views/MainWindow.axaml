@@ -61,21 +61,18 @@
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="250"/>
-                <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="300"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="402"/>
             </Grid.ColumnDefinitions>
 
-            <Panel Grid.Column="0"  Background="#f3f6f4">
-                <Label>Make list</Label>
+            <Panel Grid.Column="0"  Background="#f3f6f4" Margin="10,0,10,0">
                 <local:MakeList DataContext="{Binding MakeListViewModel}"/>
             </Panel>
-            <Panel Grid.Column="2" Background="#f3f6f4">
+            <Panel Grid.Column="1" Background="#f3f6f4" Margin="0,0,10,0">
                 <local:ProcessOptions DataContext="{Binding ProcessOptionsViewModel}" />
             </Panel>
-            <Panel Grid.Column="4" Background="#f3f6f4">
-                <TextBox FontFamily="{StaticResource JetBrainsMono}" Text="{Binding EditBoxContent}" />
+            <Panel Grid.Column="2" Background="#f3f6f4" Margin="0,0,10,0">
+                <TextBox FontFamily="{StaticResource JetBrainsMono}" Text="{Binding EditBoxContent}" TextWrapping="Wrap" />
             </Panel>
         </Grid>
     </DockPanel>

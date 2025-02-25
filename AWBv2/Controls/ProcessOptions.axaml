@@ -48,6 +48,15 @@
                     <Button Content="Stop" />
                     <Button Content="Skip" />
                 </StackPanel>
+                <HeaderedContentControl Header="Saving">
+                    <StackPanel Orientation="Vertical">
+                        <CheckBox Content="Auto save" IsChecked="{Binding AutoSave}" />
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Label Content="Delay between edits:" VerticalAlignment="Center" Grid.Column="0" Margin="0, 0, 5, 0" />
+                            <NumericUpDown Grid.Column="1" Value="{Binding EditDelay}" Width="100" Increment="1" Minimum="0" HorizontalAlignment="Left" />
+                        </Grid>
+                    </StackPanel>
+                </HeaderedContentControl>
             </StackPanel>
 
         </TabItem>

@@ -120,9 +120,9 @@ public class MainWindowViewModel : ReactiveObject
                     Console.WriteLine($"Content: {article.OriginalArticleText}");
                     Console.WriteLine($"Protected: {article.Protections.Any()}");
                     
-                    // simulate a delay
-                    // @TODO: remove and actually implement.
-                    await Task.Delay(5000);
+                    // simulate the edit delay if given, alternatively use 5s at the moment as a test.
+                    int delay = ProcessOptionsViewModel.AutoSave ? ProcessOptionsViewModel.EditDelay * 1000 : 5000;
+                    await Task.Delay(delay);
                     
                     MakeListViewModel.Pages.Remove(pageTitle);
                     

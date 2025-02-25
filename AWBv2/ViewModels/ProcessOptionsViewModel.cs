@@ -36,6 +36,16 @@ public class ProcessOptionsViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> StartProcessingCommand { get; }
 
     [Reactive] public string EditSummary { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Should we autosave?
+    /// </summary>
+    [Reactive] public bool AutoSave { get; set; } = false;
+    
+    /// <summary>
+    /// How long should we delay between each save?
+    /// </summary>
+    [Reactive] public int EditDelay { get; set; } = 0;
     
     public ProcessOptionsViewModel()
     {

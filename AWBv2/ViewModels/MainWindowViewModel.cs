@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -18,6 +19,7 @@ namespace AWBv2.ViewModels;
 public class MainWindowViewModel : ReactiveObject
 {
     private AWBWebBrowser _webBrowser;
+    
     [Reactive] public bool IsMinorEdit { get; set; } = false;
     [Reactive] public string LblUsername { get; set; } = string.Empty;
     [Reactive] public string LblProject { get; set; } = string.Empty;
@@ -35,6 +37,10 @@ public class MainWindowViewModel : ReactiveObject
     public ReactiveCommand<Unit, Unit> RequestClose { get; }
     public Interaction<ProfileWindowViewModel, Unit> ShowProfileWindowInteraction { get; }
     public Interaction<Unit, Unit> CloseWindowInteraction { get; }
+    
+    private CancellationTokenSource _cts;
+    
+    private TaskCompletionSource<bool> _saveTcs = new TaskCompletionSource<bool>();
 
     public AWBWebBrowser WebBrowser
     {
@@ -58,7 +64,45 @@ public class MainWindowViewModel : ReactiveObject
         MakeListViewModel = new MakeListViewModel();
         ProcessOptionsViewModel = new ProcessOptionsViewModel();
         
-        ProcessOptionsViewModel.StartProcessingCommand.Subscribe(async _ => await ProcessArticlesAsync());
+        ProcessOptionsViewModel.StartProcessingCommand.Subscribe(async _ =>
+        {
+            _cts = new CancellationTokenSource();
+            try
+            {
+                await ProcessArticlesAsync(_cts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("[Debug]: Processing was canceled; no further processing will occur.");
+            }
+            finally
+            {
+                _cts.Dispose();
+                _cts = null;
+            }
+            
+        });
+        
+        // when the stop button is clicked, cancel the token, which signals to the while loop in 
+        // self::ProcessArticlesAsync() that it should stop looping
+        ProcessOptionsViewModel.StopCommand.Subscribe(_ =>
+        {
+            _cts?.Cancel();
+        });
+        
+        // when the skip button is called, set the result as false so that we know to skip the page and move onto the 
+        // next page in the list
+        ProcessOptionsViewModel.SkipCommand.Subscribe(async _ =>  
+        {
+            _saveTcs?.TrySetResult(true);
+        });
+        
+        // when the save button is clicked, set the result as true on the token so that we can move onto the
+        // next article in the list
+        ProcessOptionsViewModel.SaveCommand.Subscribe(_ =>
+        {
+            _saveTcs?.TrySetResult(true);
+        });
     }
 
     private async Task CloseWindow()
@@ -95,7 +139,7 @@ public class MainWindowViewModel : ReactiveObject
         LblUsername = Wiki.User.Username;
     }
 
-    private async Task ProcessArticlesAsync()
+    private async Task ProcessArticlesAsync(CancellationToken ct)
     {
         // we need a copy of the pages collection becasue its not safe to remove from it
         // whilst it is being iterated over.

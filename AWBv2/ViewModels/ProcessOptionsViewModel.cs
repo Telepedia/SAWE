@@ -34,7 +34,22 @@ public class ProcessOptionsViewModel : ReactiveObject
     /// Command emitted when the start button is clicked
     /// </summary>
     public ReactiveCommand<Unit, Unit> StartProcessingCommand { get; }
+    
+    /// <summary>
+    /// Command emitted when the save button is clicked
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> SaveCommand { get; }
+    
+    /// <summary>
+    /// Command emitted when the skip button is clicked
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> SkipCommand { get; }
 
+    /// <summary>
+    /// Command emitted when the stop button is clicked
+    /// </summary>
+    public ReactiveCommand<Unit, Unit> StopCommand { get; }
+    
     [Reactive] public string EditSummary { get; set; } = string.Empty;
 
     /// <summary>
@@ -50,7 +65,13 @@ public class ProcessOptionsViewModel : ReactiveObject
     public ProcessOptionsViewModel()
     {
         OpenFindReplaceCommand = ReactiveCommand.Create(OpenFindReplace);
+        
+        // Below are all commands that emit events to be listened to by MainWindowViewModel, they do not trigger
+        // a method in this class like OpenFindReplaceCommand
         StartProcessingCommand = ReactiveCommand.Create(() => { });
+        SaveCommand = ReactiveCommand.Create(() => { });
+        SkipCommand = ReactiveCommand.Create(() => { });
+        StopCommand = ReactiveCommand.Create(() => { });
     }
     
     /// <summary>

@@ -45,8 +45,7 @@
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
                     <Button Content="Start" Classes="primary" Command="{Binding StartProcessingCommand}" />
-                    <Button Content="Stop" />
-                    <Button Content="Skip" />
+                    <Button Content="Stop" Command="{Binding StopCommand}" />
                 </StackPanel>
                 <HeaderedContentControl Header="Saving">
                     <StackPanel Orientation="Vertical">
@@ -55,6 +54,8 @@
                             <Label Content="Delay between edits:" VerticalAlignment="Center" Grid.Column="0" Margin="0, 0, 5, 0" />
                             <NumericUpDown Grid.Column="1" Value="{Binding EditDelay}" Width="100" Increment="1" Minimum="0" HorizontalAlignment="Left" />
                         </Grid>
+                        <Button Content="Save" Margin="0, 10, 0, 0" Command="{Binding SkipCommand}"/>
+                        <Button Content="Skip" Margin="0, 10, 0, 0" Command="{Binding SkipCommand}"/>
                     </StackPanel>
                 </HeaderedContentControl>
             </StackPanel>

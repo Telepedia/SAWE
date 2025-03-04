@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
@@ -94,7 +95,7 @@ public class MainWindowViewModel : ReactiveObject
         // next page in the list
         ProcessOptionsViewModel.SkipCommand.Subscribe(async _ =>  
         {
-            _saveTcs?.TrySetResult(true);
+            _saveTcs?.TrySetResult(false);
         });
         
         // when the save button is clicked, set the result as true on the token so that we can move onto the
@@ -118,7 +119,6 @@ public class MainWindowViewModel : ReactiveObject
     
     public async Task HandleProfileLogin(Profile profile)
     {
-        
         try
         {
             Wiki = await Wiki.CreateAsync(profile.Wiki);
@@ -141,48 +141,92 @@ public class MainWindowViewModel : ReactiveObject
 
     private async Task ProcessArticlesAsync(CancellationToken ct)
     {
+        
+        bool autoSave = ProcessOptionsViewModel.AutoSave;
+        int editDelay = ProcessOptionsViewModel.EditDelay;
+        string editSummary = ProcessOptionsViewModel.EditSummary;
+        
         // we need a copy of the pages collection becasue its not safe to remove from it
         // whilst it is being iterated over.
         // maybe we shouldn't be accessing the contents of the view model like this? idek, it works though so fuck it
-        foreach (string pageTitle in MakeListViewModel.Pages.ToList())
+        List<string> pagesToProcess = MakeListViewModel.Pages.ToList();
+        
+        foreach (string pageTitle in pagesToProcess)
         {
+            // if we requested cancellation, by clicking the stop button, exit.
+            if (ct.IsCancellationRequested) break;
+            
             try
             {
                 var article = await Wiki.ApiClient.GetArticleAsync(pageTitle);
                 
-                if (article != null)
+                if (article == null)
                 {
-                    Articles.Add(article);
+                    LblIgnoredArticles++;
+                    continue;
+                }
+                
+                Articles.Add(article);
                     
-                    // set the content for editing, we will need this for later so that we can edit the content
-                    // that SAWE may change.
-                    EditBoxContent = article.OriginalArticleText;
-                    
-                    // Print to console as dehbug for naw
-                    // @TODO: remove plz
-                    Console.WriteLine($"Title: {article.Name}");
-                    Console.WriteLine($"Content: {article.OriginalArticleText}");
-                    Console.WriteLine($"Protected: {article.Protections.Any()}");
-                    
-                    // simulate the edit delay if given, alternatively use 5s at the moment as a test.
-                    int delay = ProcessOptionsViewModel.AutoSave ? ProcessOptionsViewModel.EditDelay * 1000 : 5000;
-                    await Task.Delay(delay);
-                    
-                    MakeListViewModel.Pages.Remove(pageTitle);
-                    
+                // set the content for editing, we will need this for later so that we can edit the content
+                // that SAWE may change.
+                EditBoxContent = article.OriginalArticleText;
+                
+                // wait for the delay if needed 
+                if (autoSave)
+                {
+                    // save the article (placeholder, we will get the article back here from the changes we made, and
+                    // then we save the changes
+                    await DoChanges(article, editSummary);
+                    await Task.Delay(editDelay * 1000, ct);
                 }
                 else
                 {
-                    ++LblIgnoredArticles;
+                    _saveTcs = new TaskCompletionSource<bool>();
+                    using (ct.Register(() => _saveTcs.TrySetCanceled()))
+                    {
+                        try
+                        {
+                            var save = await _saveTcs.Task;
+                            if (save) await DoChanges(article, editSummary);
+                            else LblIgnoredArticles++;
+                        }
+                        catch (TaskCanceledException)
+                        {
+                            break;
+                        }
+                        finally
+                        {
+                            _saveTcs = null;
+                        }
+                    }
                 }
+
+                MakeListViewModel.Pages.Remove(pageTitle);
+                LblEditCount++;
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing {pageTitle}: {ex.Message}");
             }
-            
-            // reset the edit box to an empty string.
-            EditBoxContent = string.Empty;
+            finally
+            {
+                EditBoxContent = string.Empty;
+            }
         }
+    }
+
+    /// <summary>
+    /// Encapsulate all the logic for doing the changes here (such as calling out to other methods)
+    /// To keep the main loop for processing the articles clear.
+    /// </summary>
+    /// <param name="article"></param>
+    /// <param name="editSummary"></param>
+    /// <returns></returns>
+    private Task DoChanges(Article article, string editSummary)
+    {
+        // placeholder for now
+        Console.WriteLine($"Title: {article.Name}, Summary: {editSummary}");
+        return Task.CompletedTask;
     }
 }

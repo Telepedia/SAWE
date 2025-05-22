@@ -188,8 +188,15 @@ public class MainWindowViewModel : ReactiveObject
                         try
                         {
                             var save = await _saveTcs.Task;
-                            if (save) await DoChanges(article, editSummary);
-                            else LblIgnoredArticles++;
+                            if (save)
+                            {
+                                await DoChanges(article, editSummary);
+                                LblEditCount++;
+                            }
+                            else
+                            {
+                                LblIgnoredArticles++;
+                            }
                         }
                         catch (TaskCanceledException)
                         {
@@ -203,7 +210,6 @@ public class MainWindowViewModel : ReactiveObject
                 }
 
                 MakeListViewModel.Pages.Remove(pageTitle);
-                LblEditCount++;
             }
             catch (Exception ex)
             {

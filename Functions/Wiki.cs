@@ -55,13 +55,13 @@ public class Wiki
     /// </summary>
     public bool UnicodeCategoryCollation = false;
     
-    public string WPAWB { get; private set; } = "[https://github.com/OAuthority/AWBv2 AWBv2]";
+    public string WPAWB { get; private set; } = "[https://github.com/Telepedia/SAWE SAWE]";
 
     /// <summary>
     /// The UserAgent we should use for requests; inspiration taken from WMF user agent policy
     /// see: https://foundation.wikimedia.org/wiki/Policy:Wikimedia_Foundation_User-Agent_Policy
     /// </summary>
-    public string UserAgent { get; } = "AWBv2/0.0.0 (https://github.com/OAuthority/AWBv2)";
+    public string UserAgent { get; } = "SAWE/0.0.0 (https://github.com/Telepedia/SAWE)";
     
     /// <summary>
     /// The url of the wiki

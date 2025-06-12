@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="using:AWBv2.ViewModels"
         xmlns:models="using:AWBv2.Models"
-        mc:Ignorable="d" 
+        mc:Ignorable="d"
         SizeToContent="WidthAndHeight"
         d:DesignWidth="400" d:DesignHeight="200"
         x:Class="AWBv2.Views.ProfileWindow"
@@ -13,35 +13,35 @@
         xmlns:ia="clr-namespace:Avalonia.Xaml.Interactions.Core;assembly=Avalonia.Xaml.Interactions"
         Title="Login">
     <DockPanel>
-        <ListBox ItemsSource="{Binding Profiles}" Margin="5" 
+        <ListBox ItemsSource="{Binding Profiles}" Margin="5"
                  SelectedItem="{Binding SelectedProfile}">
             <ListBox.ItemTemplate>
                 <DataTemplate x:DataType="models:Profile">
                     <StackPanel Orientation="Horizontal" Margin="2">
                         <i:Interaction.Behaviors>
                             <ia:EventTriggerBehavior EventName="DoubleTapped">
-                                <ia:InvokeCommandAction 
-                                    Command="{Binding $parent.((vm:ProfileWindowViewModel)DataContext).LoginCommand, Mode=OneWay}" 
+                                <ia:InvokeCommandAction
+                                    Command="{Binding $parent.((vm:ProfileWindowViewModel)DataContext).LoginCommand, Mode=OneWay}"
                                     CommandParameter="{Binding}" />
                             </ia:EventTriggerBehavior>
                         </i:Interaction.Behaviors>
-                        <TextBlock Text="{Binding ID}" Width="30"/>
-                        <TextBlock Text="{Binding Username}" Margin="10,0" Width="100"/>
-                        <TextBlock Text="{Binding Wiki}" Margin="10, 0" Width="100"/>
+                        <TextBlock Text="{Binding ID}" Width="30" />
+                        <TextBlock Text="{Binding Username}" Margin="10,0" Width="100" />
+                        <TextBlock Text="{Binding Wiki}" Margin="10, 0" Width="100" />
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
         <StackPanel Margin="20" Spacing="10">
-            <TextBox Watermark="Username" Text="{Binding Username}"/>
-            <TextBox Watermark="Password" PasswordChar="*" Text="{Binding Password}"/>
+            <TextBox Watermark="Username" Text="{Binding Username}" />
+            <TextBox Watermark="Password" PasswordChar="*" Text="{Binding Password}" />
             <TextBox Watermark="Wiki Url" Text="{Binding Wiki}" />
             <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" />
-            <Button Content="Login" Command="{Binding LoginCommand}"/>
+            <Button Content="Login" Command="{Binding LoginCommand}" />
             <StackPanel Orientation="Horizontal" Spacing="10">
-                <Button Content="Delete" Command="{Binding DeleteCommand}"/>
-                <Button Content="Edit" Command="{Binding EditCommand}"/>
-                <CheckBox Content="Save" IsChecked="{Binding SavePassword}"/>
+                <Button Content="Delete" Command="{Binding DeleteCommand}" />
+                <Button Content="Edit" Command="{Binding EditCommand}" />
+                <CheckBox Content="Save" IsChecked="{Binding SavePassword}" />
             </StackPanel>
         </StackPanel>
     </DockPanel>

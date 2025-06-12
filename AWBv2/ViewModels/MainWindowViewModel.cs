@@ -105,30 +105,21 @@ public class MainWindowViewModel : ReactiveObject
 
     private async Task ShowProfileWindow()
     {
-        var profileVM = new ProfileWindowViewModel();
-        await ShowProfileWindowInteraction.Handle(profileVM);
-    }
-    
-    public async Task HandleProfileLogin(Profile profile)
-    {
-        try
+        var profileVm = new ProfileWindowViewModel();
+        
+        profileVm.LoginSuccess.RegisterHandler(async interaction =>
         {
-            Wiki = await Wiki.CreateAsync(profile.Wiki);
-            await Wiki.ApiClient.LoginUserAsync(profile.Username, profile.Password);
-            await Wiki.ApiClient.FetchUserInformationAsync();
+            var wiki = interaction.Input;
             
-            // deeeeeeebug
-            Console.WriteLine(JsonSerializer.Serialize(Wiki.User, new JsonSerializerOptions { WriteIndented = true }));
-            MakeListViewModel.Initialize(Wiki);
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Failed to init wiki: {ex.Message}");
-            throw;
-        }
-
-        LblProject = Wiki.Sitename;
-        LblUsername = Wiki.User.Username;
+            Wiki = wiki;
+            LblProject = wiki.Sitename;
+            LblUsername = wiki.User.Username;
+            MakeListViewModel.Initialize(wiki);
+            
+            interaction.SetOutput(Unit.Default);
+        });
+        
+        await ShowProfileWindowInteraction.Handle(profileVm);
     }
 
     private async Task ProcessArticlesAsync(CancellationToken ct)

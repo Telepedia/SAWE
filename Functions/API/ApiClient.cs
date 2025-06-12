@@ -94,7 +94,7 @@ public class ApiClient
     /// This lists whether or not they are blocked, an admin, etc.
     /// </summary>
     /// <returns></returns>
-    public async Task<string> LoginUserAsync(string username, string password)
+    public async Task LoginUserAsync(string username, string password)
     {
         string? loginToken = await GetTokenAsync("login");
 
@@ -133,11 +133,23 @@ public class ApiClient
 
             if (result == "Success")
             {
-                return "Login successful!";
+                return;
             }
             else
             {
-                return $"Login failed. Reason: {result}";
+                // chek if we have a reason to return - if MediaWiki provided one we should have one
+                // otherwise, just throw the exception anyway
+                string reason = "";
+                if (loginElement.TryGetProperty("reason", out JsonElement reasonElement))
+                {
+                    reason = reasonElement.GetString() ?? result;
+                }
+                else
+                {
+                    reason = result;
+                }
+            
+                throw new UnauthorizedAccessException(reason);
             }
         }
 

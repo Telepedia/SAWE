@@ -1,10 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
 using ReactiveUI;
-using ReactiveUI.Fody;
 using System.Reactive;
 using System.Reactive.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using AWBv2.Models;
 using Functions;
@@ -23,18 +21,25 @@ public class ProfileWindowViewModel : ReactiveObject
     
     [Reactive] public string Wiki { get; set; }
     
-    [Reactive] public bool SavePassword { get; set; }
+    [Reactive] public bool SavePassword { get; set; } = false;
+    
+    [Reactive] public bool IsLoggingIn { get; set; } = false;
     
     // placeholder for any error message that might occur during this process, since Avalonia
     // doesn't natively support messagebox or anything like that.
     [Reactive] public string ErrorMessage { get; set; } = string.Empty;
+
+    // do we have an error? if so, we show the error message above
+    [Reactive] public bool HasError { get; set; } = false;
+    
     public ReactiveCommand<Unit, Unit> LoginCommand { get; }
     public Interaction<Unit, Unit> CloseWindow { get; }
 
-    public Interaction<Profile, Unit> LoginSuccess { get; } = new();
+    public Interaction<Wiki, Unit> LoginSuccess { get; } = new();
     
     public ReactiveCommand<Unit, Unit> DeleteCommand { get; }
     public ReactiveCommand<Unit, Unit> EditCommand { get; }
+    
     public ProfileWindowViewModel()
     {
         CloseWindow = new Interaction<Unit, Unit>();
@@ -67,56 +72,78 @@ public class ProfileWindowViewModel : ReactiveObject
     /// </summary>
     private async Task PerformLogin()
     {
-        Profile loginProfile = null;
+        // Clear previous errors
+        HasError = false;
+        ErrorMessage = "";
+        IsLoggingIn = true;
+        
+        try
+        {
+            Profile loginProfile = null;
 
-        // Determine if we're using selected profile (vdouble clicked) or manually entered the data
-        if (SelectedProfile != null)
-        {
-            loginProfile = SelectedProfile;
-        }
-        else
-        {
-            if (string.IsNullOrWhiteSpace(Username) || 
-                string.IsNullOrWhiteSpace(Password) || 
-                string.IsNullOrWhiteSpace(Wiki))
+            // Determine if we're using selected profile or manually entered data
+            if (SelectedProfile != null)
             {
-                ErrorMessage = "You must provide fields for username, password, and wiki";
-                return;
+                loginProfile = SelectedProfile;
+            }
+            else
+            {
+                if (string.IsNullOrWhiteSpace(Username) || 
+                    string.IsNullOrWhiteSpace(Password) || 
+                    string.IsNullOrWhiteSpace(Wiki))
+                {
+                    ErrorMessage = "You must provide fields for username, password, and wiki";
+                    HasError = true;
+                    return;
+                }
+
+                loginProfile = new Profile
+                {
+                    Username = Username,
+                    Password = Password,
+                    Wiki = Wiki
+                };
             }
 
-            loginProfile = new Profile
+            // Handle password saving only for NEW profiles
+            if (SavePassword && SelectedProfile == null)
             {
-                Username = Username,
-                Password = Password,
-                Wiki = Wiki
-            };
-        }
-
-        // Handle password saving only for NEW profiles
-        if (SavePassword && SelectedProfile == null)
-        {
-            var saveResult = await AWBProfiles.Save(loginProfile);
-            if (!saveResult)
-            {
-                ErrorMessage = "Failed to save profile. Please try again.";
-                return;
+                var saveResult = await AWBProfiles.Save(loginProfile);
+                if (!saveResult)
+                {
+                    ErrorMessage = "Failed to save profile. Please try again.";
+                    HasError = true;
+                    return;
+                }
             }
+            
+            var wiki = await Functions.Wiki.CreateAsync(loginProfile.Wiki);
+            await wiki.ApiClient.LoginUserAsync(loginProfile.Username, loginProfile.Password);
+            await wiki.ApiClient.FetchUserInformationAsync();
+            
+            Console.WriteLine($"Successfully logged in as: {wiki.User.Username}");
+            
+            // Pass the Wiki object to the main window so that we do not need to create a new instance
+            // hopefuilly to save a bit of processing time
+            await LoginSuccess.Handle(wiki);
+            await CloseWindow.Handle(Unit.Default);
         }
-        
-        if (SelectedProfile != null && !Profiles.Contains(SelectedProfile))
+        catch (UnauthorizedAccessException ex)
         {
-            Profiles.Add(SelectedProfile);
+            ErrorMessage = ex.Message;
+            HasError = true;
         }
-
-        // deeebug for now
-        Console.WriteLine($"Logged in as: {JsonSerializer.Serialize(loginProfile, 
-            new JsonSerializerOptions { WriteIndented = true })}");
-        
-        await LoginSuccess.Handle(loginProfile);
-        await CloseWindow.Handle(Unit.Default);
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to login: {ex.Message}");
+            ErrorMessage = $"Login failed: {ex.Message}";
+            HasError = true;
+        }
+        finally
+        {
+            IsLoggingIn = false;
+        }
     }
-
-
     
     /// <summary>
     /// Load all of the profiles. For now, just returns the list at the top of Profiles.cs

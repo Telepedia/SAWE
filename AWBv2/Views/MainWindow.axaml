@@ -41,9 +41,6 @@
             <MenuItem Header="Options" Foreground="Black" />
             <MenuItem Header="Tools" Foreground="Black" />
         </Menu>
-        
-		<!--AWBWebBrowser window that appears at the top of the screen to show diffs et al. -->
-       <local:AWBWebBrowser x:Name="WebBrowser"  DockPanel.Dock="Top" Height="300" Background="White"/>
 		
         <DockPanel DockPanel.Dock="Bottom" Height="22">
             <ProgressBar DockPanel.Dock="Left" Minimum="0" Maximum="100" Width="100" Height="16" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" />

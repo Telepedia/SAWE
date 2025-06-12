@@ -19,8 +19,6 @@ namespace AWBv2.ViewModels;
 
 public class MainWindowViewModel : ReactiveObject
 {
-    private AWBWebBrowser _webBrowser;
-    
     [Reactive] public bool IsMinorEdit { get; set; } = false;
     [Reactive] public string LblUsername { get; set; } = string.Empty;
     [Reactive] public string LblProject { get; set; } = string.Empty;
@@ -42,12 +40,6 @@ public class MainWindowViewModel : ReactiveObject
     private CancellationTokenSource _cts;
     
     private TaskCompletionSource<bool> _saveTcs = new TaskCompletionSource<bool>();
-
-    public AWBWebBrowser WebBrowser
-    {
-        get => _webBrowser ??= new AWBWebBrowser();
-        set => this.RaiseAndSetIfChanged(ref _webBrowser, value);
-    }
     
     [Reactive] public MakeListViewModel MakeListViewModel { get; set; }
     

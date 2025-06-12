@@ -2,8 +2,6 @@
 using System;
 using System.IO;
 using Avalonia.ReactiveUI;
-using Xilium.CefGlue;
-using Xilium.CefGlue.Common;
 
 namespace AWBv2;
 
@@ -21,10 +19,6 @@ sealed class Program
     public static AppBuilder BuildAvaloniaApp()
         => AppBuilder.Configure<App>()
             .UsePlatformDetect()
-            .AfterSetup(_ => CefRuntimeLoader.Initialize(new CefSettings()
-            {
-               RootCachePath = Path.Combine(Path.GetTempPath(), "CefGlue_" + Guid.NewGuid().ToString().Replace("-", null))
-            }))
             .WithInterFont()
             .UseReactiveUI()
             .LogToTrace();

@@ -6,7 +6,7 @@
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
-        <RuntimeIdentifier>osx-x64</RuntimeIdentifier>
+        <RuntimeIdentifiers>win-x64;osx-x64;osx-arm64;linux-x64</RuntimeIdentifiers>
         <Title>AWBv2</Title>
         <Version>1.0.0</Version> <!-- Display version -->
         <AssemblyVersion>1.0.0.0</AssemblyVersion> <!-- Breaking change -->
@@ -14,17 +14,16 @@
         <InformationalVersion>1.0.0-beta</InformationalVersion>  <!-- human read; keep in sync with <Version> -->
         <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     </PropertyGroup>
-    
-    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
-        <CefGluePackageSuffix>.x64</CefGluePackageSuffix>
-        <CefGlueTargetPlatform>osx-x64</CefGlueTargetPlatform>
+
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
-
-	<PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Windows'))">
-		<CefGluePackageSuffix>.x64</CefGluePackageSuffix>
-		<CefGlueTargetPlatform>win-x64</CefGlueTargetPlatform>
-	</PropertyGroup>
-
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('OSX'))">
+        <RuntimeIdentifier>osx-arm64</RuntimeIdentifier>
+    </PropertyGroup>
+    <PropertyGroup Condition="$([MSBuild]::IsOSPlatform('Linux'))">
+        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+    </PropertyGroup>
 
 	<ItemGroup>
         <AvaloniaResource Include="Assets\**" />
@@ -40,8 +39,6 @@
         <!-- Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration. -->
         <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.1.0" />
         <PackageReference Include="Avalonia.Xaml.Interactions" Version="11.2.0.8" />
-        <PackageReference Include="CefGlue.Avalonia" Version="120.6099.210" />
-        <PackageReference Include="CefGlue.Common" Version="120.6099.210" />
         <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.1" />
         <PackageReference Include="ReactiveUI.Fody" Version="19.5.41" />
     </ItemGroup>

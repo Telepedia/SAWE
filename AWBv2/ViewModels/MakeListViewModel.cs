@@ -190,7 +190,6 @@ public class MakeListViewModel : ReactiveObject
 
                 if (pages.Count > 0)
                 {
-                    Pages.Clear();
                     foreach (string page in pages)
                     {
                         Pages.Add(page);

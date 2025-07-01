@@ -124,7 +124,6 @@ public class MainWindowViewModel : ReactiveObject
 
     private async Task ProcessArticlesAsync(CancellationToken ct)
     {
-        
         bool autoSave = ProcessOptionsViewModel.AutoSave;
         int editDelay = ProcessOptionsViewModel.EditDelay;
         string editSummary = ProcessOptionsViewModel.EditSummary;
